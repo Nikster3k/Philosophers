@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/02 15:42:28 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/02 16:28:42 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,21 +39,19 @@ void	ft_print_philos(t_philo *phil, int count)
 void	ft_eat(t_philo *philo)
 {
 	struct timeval	tv;
-	int				has_eat;
 
-	has_eat = 0;
 	pthread_mutex_lock(philo->fork2);
 	pthread_mutex_lock(philo->fork1);
+	printf("%i Life left: %f\n", philo->data.nbr, philo->lifecount);
+	if (philo->lifecount >= philo->data.ttd)
+		return ;
 	gettimeofday(&tv, NULL);
 	printf("%lu %i is eating\n",
 		(tv.tv_sec * 1000) + (tv.tv_usec / 1000), philo->data.nbr);
 	usleep(philo->data.tte * 1000);
-	has_eat = 1;
-	philo->lifecount = -philo->data.tte;
+	philo->lifecount -= philo->data.tte;
 	pthread_mutex_unlock(philo->fork1);
 	pthread_mutex_unlock(philo->fork2);
-	if (has_eat != 1)
-		return ;
 	gettimeofday(&tv, NULL);
 	printf("%lu %i is sleeping\n",
 		(tv.tv_sec * 1000) + (tv.tv_usec / 1000), philo->data.nbr);
@@ -66,6 +64,7 @@ void	ft_eat(t_philo *philo)
 void	*ft_philo_loop(void	*data)
 {
 	t_philo			*philo;
+	float			timetook;
 	struct timeval	start;
 	struct timeval	end;
 
@@ -77,10 +76,13 @@ void	*ft_philo_loop(void	*data)
 		gettimeofday(&start, NULL);
 		ft_eat(philo);
 		gettimeofday(&end, NULL);
-		philo->lifecount += (((end.tv_sec - start.tv_sec) * 1000)
+		timetook = (((end.tv_sec - start.tv_sec) * 1000)
 				+ ((end.tv_usec - start.tv_usec) / 1000));
-		printf("Philo%d - Took:%f\n", philo->data.nbr, philo->lifecount);
+		philo->lifecount += timetook;
+		printf("Philo%d - Lifeleft:%f\n", philo->data.nbr, philo->lifecount);
 	}
+	printf("%lu %i died\n",
+		(end.tv_sec * 1000) + (end.tv_usec / 1000), philo->data.nbr);
 	pthread_exit(NULL);
 }
 
@@ -122,7 +124,7 @@ int	main(int argc, char **argv)
 		return (MALLOC_FAIL);
 	if (ft_init_philosophers(philophs, count, data))
 		return (ft_destroy_philosophers(MALLOC_FAIL, philophs, count));
-	ft_print_philos(philophs, count);
+	//ft_print_philos(philophs, count);
 	ft_start_philos(philophs, count);
 	ft_wait_philos(philophs, count);
 	return (ft_destroy_philosophers(SUCCESS, philophs, count));
