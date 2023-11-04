@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 12:12:52 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/02 15:35:47 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/04 16:09:18 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,45 +20,31 @@ int	ft_destroy_philosophers(int err, t_philo *phil, int count)
 		return (err);
 	i = 0;
 	while (i < count)
-	{
-		if (phil[i].fork2 != NULL)
-		{
-			pthread_mutex_destroy(phil[i].fork2);
-			free(phil[i].fork2);
-		}
-		i++;
-	}
+		pthread_mutex_destroy(&phil[i++].own.mutex);
 	free(phil);
 	return (err);
 }
 
-//could stop initializing philosophers when encounter error and
-//meanwhile count. Then use that count to also destroy the philos
-//that way I know that when error 1 occured it was malloc fail.
-//and error 2 I know that the mutex init failed and I dont have
-//to destroy the mutex, which could maybe cause errors when it has
-//not been initialized.
-
-int	ft_init_philosophers(t_philo *philos, int count, t_lifedata data)
+int	ft_init_philosophers(t_philo *philos, int count, t_lifedata *data)
 {
 	int		i;
 
 	i = 0;
 	while (i < count)
+		if (pthread_mutex_init(&philos[i++].own.mutex, NULL))
+			return (MUTEX_INITFAIL);
+	i = 0;
+	while (i < count)
 	{
 		philos[i].data = data;
-		philos[i].data.nbr = i + 1;
+		philos[i].nbr = i + 1;
 		philos[i].lifecount = 0;
-		philos[i].fork2 = ft_calloc(sizeof(pthread_mutex_t), 1);
-		if (philos[i].fork2 == NULL)
-			return (MALLOC_FAIL);
-		if (pthread_mutex_init(philos[i].fork2, NULL))
-			return (MUTEX_INITFAIL);
-		if (i != 0)
-			philos[i].fork1 = philos[i - 1].fork2;
+		philos[i].eatcount = 0;
+		if (i != count - 1)
+			philos[i].right = &philos[i + 1].own;
 		i++;
 	}
-	philos[0].fork1 = philos[count - 1].fork2;
+	philos[count - 1].right = &philos[0].own;
 	return (SUCCESS);
 }
 
