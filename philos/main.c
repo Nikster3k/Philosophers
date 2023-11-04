@@ -6,12 +6,11 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/04 16:23:59 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/04 19:06:08 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-#include <stdio.h>
 
 void	ft_print_data(t_lifedata data)
 {
@@ -36,74 +35,53 @@ void	ft_print_philos(t_philo *phil, int count)
 	}
 }
 
-void	ft_eat(t_philo *philo)
+long	ft_do_it(t_philo *philo)
 {
-	struct timeval	tv;
+	struct timeval	start;
+	struct timeval	end;
 
-	philo->own.is_locked = 1;
-	printf("%i Life spent: %i\n", philo->nbr, philo->lifecount);
-	if (philo->lifecount >= philo->data->ttd)
-		return ;
-	gettimeofday(&tv, NULL);
-	printf("%lu %i is eating\n",
-		(tv.tv_sec * 1000) + (tv.tv_usec / 1000), philo->nbr);
-	philo->eatcount++;
-	usleep(philo->data->tte * 1000);
-	philo->lifecount = -(philo->data->tte);
-}
-
-void	ft_check_forks(t_philo *philo)
-{
-	struct timeval	tv;
-
-	if (philo->right->is_locked)
-		return ;
-	if (pthread_mutex_lock(&philo->right->mutex))
-		printf("Failed lock?\n");
-	philo->right->is_locked = 1;
-	if (philo->own.is_locked)
+	gettimeofday(&start, NULL);
+	if (ft_took_forks(philo))
 	{
-		pthread_mutex_unlock(&philo->right->mutex);
-		philo->right->is_locked = 0;
-		return ;
+		if ((int)(philo->lifecount + (ft_currtime() - ft_tvtms(&start)))
+			> philo->data->ttd)
+			return (-1);
+		printf("%lu %i is eating\n", ft_gcts(philo->data->st), philo->nbr);
+		usleep(philo->data->tte * 1000);
+		philo->lifecount = -(philo->data->tte);
+		philo->eatcount++;
+		ft_drop_forks(philo);
+		printf("%lu %i is sleeping\n", ft_gcts(philo->data->st), philo->nbr);
+		usleep(philo->data->tts * 1000);
+		printf("%lu %i is thinking\n", ft_gcts(philo->data->st), philo->nbr);
 	}
-	pthread_mutex_lock(&philo->own.mutex);
-	ft_eat(philo);
-	pthread_mutex_unlock(&philo->right->mutex);
-	philo->right->is_locked = 0;
-	pthread_mutex_unlock(&philo->own.mutex);
-	philo->own.is_locked = 0;
-	gettimeofday(&tv, NULL);
-	printf("%lu %i is sleeping\n",
-		(tv.tv_sec * 1000) + (tv.tv_usec / 1000), philo->nbr);
-	usleep(philo->data->tts * 1000);
-	gettimeofday(&tv, NULL);
-	printf("%lu %i is thinking\n",
-		(tv.tv_sec * 1000) + (tv.tv_usec / 1000), philo->nbr);
+	else
+		usleep(1);
+	gettimeofday(&end, NULL);
+	return (ft_tvtms(&end) - ft_tvtms(&start));
 }
 
 void	*ft_philo_loop(void	*data)
 {
 	t_philo			*philo;
-	float			timetook;
-	struct timeval	start;
-	struct timeval	end;
+	long			timetook;
 
 	philo = data;
 	while (philo->lifecount < philo->data->ttd)
 	{
-		gettimeofday(&start, NULL);
-		ft_check_forks(philo);
-		gettimeofday(&end, NULL);
-		timetook = (((end.tv_sec - start.tv_sec) * 1000)
-				+ ((end.tv_usec - start.tv_usec) / 1000));
+		timetook = ft_do_it(philo);
+		if (timetook == -1)
+			break ;
+		if (timetook == -2)
+			return (NULL);
 		if (philo->data->mineat != 0 && philo->data->mineat == philo->eatcount)
-			pthread_exit(NULL);
+			return (NULL);
 		philo->lifecount += timetook;
-		//printf("Philo%d - Lifespent:%i\n", philo->nbr, philo->lifecount);
+		printf("Philo%d - Lifecount:%ld\n", philo->nbr, philo->lifecount);
 	}
-	printf("%lu %i died\n",
-		(end.tv_sec * 1000) + (end.tv_usec / 1000), philo->nbr);
+	printf("%lu %i died\n", ft_gcts(philo->data->st), philo->nbr);
+	pthread_mutex_unlock(&philo->own.mutex);
+	pthread_mutex_unlock(&philo->right->mutex);
 	return (NULL);
 }
 
@@ -164,8 +142,9 @@ int	main(int argc, char **argv)
 		return (MALLOC_FAIL);
 	if (ft_init_philosophers(philophs, count, &data))
 		return (ft_destroy_philosophers(MALLOC_FAIL, philophs, count));
-	ft_print_philos(philophs, count);
+	data.st = ft_currtime();
 	ft_start_philos(philophs, count);
+	ft_print_philos(philophs, count);
 	ft_wait_philos(philophs, count);
 	return (ft_destroy_philosophers(SUCCESS, philophs, count));
 }
