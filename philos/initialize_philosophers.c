@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 12:12:52 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/04 16:09:18 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/05 20:17:40 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,23 @@ int	ft_init_philosophers(t_philo *philos, int count, t_lifedata *data)
 
 	i = 0;
 	while (i < count)
-		if (pthread_mutex_init(&philos[i++].own.mutex, NULL))
+	{
+		if (pthread_mutex_init(&philos[i].own.mutex, NULL))
 			return (MUTEX_INITFAIL);
+		if (pthread_mutex_init(&philos[i].own.check, NULL))
+			return (MUTEX_INITFAIL);
+		if (pthread_mutex_init(&philos[i].term_mutex, NULL))
+			return (MUTEX_INITFAIL);
+		i++;
+	}
 	i = 0;
 	while (i < count)
 	{
-		philos[i].data = data;
+		philos[i].data = *data;
 		philos[i].nbr = i + 1;
 		philos[i].lifecount = 0;
 		philos[i].eatcount = 0;
+		philos[i].terminate = 0;
 		if (i != count - 1)
 			philos[i].right = &philos[i + 1].own;
 		i++;

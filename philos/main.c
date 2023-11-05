@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/04 19:06:08 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/05 20:22:38 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@ void	ft_print_philos(t_philo *phil, int count)
 	int	i;
 
 	i = 0;
-	ft_print_data(*phil[0].data);
+	ft_print_data(phil[0].data);
 	while (i < count)
 	{
 		printf("Number: %i | thread id: %lu\n", phil[i].nbr, phil[i].tid);
-		printf("Fork1: %p | Fork2: %p\n",
+		printf("Own: %p | Right: %p\n",
 			&phil[i].own.mutex, &phil[i].right->mutex);
 		i++;
 	}
@@ -44,16 +44,16 @@ long	ft_do_it(t_philo *philo)
 	if (ft_took_forks(philo))
 	{
 		if ((int)(philo->lifecount + (ft_currtime() - ft_tvtms(&start)))
-			> philo->data->ttd)
+			> philo->data.ttd)
 			return (-1);
-		printf("%lu %i is eating\n", ft_gcts(philo->data->st), philo->nbr);
-		usleep(philo->data->tte * 1000);
-		philo->lifecount = -(philo->data->tte);
+		ft_print_mutlti("is eating", ft_gcts(philo->data.st), philo->nbr);
+		usleep(philo->data.tte * 1000);
+		philo->lifecount = -(philo->data.tte);
 		philo->eatcount++;
 		ft_drop_forks(philo);
-		printf("%lu %i is sleeping\n", ft_gcts(philo->data->st), philo->nbr);
-		usleep(philo->data->tts * 1000);
-		printf("%lu %i is thinking\n", ft_gcts(philo->data->st), philo->nbr);
+		ft_print_mutlti("is sleeping", ft_gcts(philo->data.st), philo->nbr);
+		usleep(philo->data.tts * 1000);
+		ft_print_mutlti("is thinking", ft_gcts(philo->data.st), philo->nbr);
 	}
 	else
 		usleep(1);
@@ -67,21 +67,28 @@ void	*ft_philo_loop(void	*data)
 	long			timetook;
 
 	philo = data;
-	while (philo->lifecount < philo->data->ttd)
+	while (philo->lifecount < philo->data.ttd)
 	{
+		pthread_mutex_lock(&philo->term_mutex);
+		if (philo->terminate)
+		{
+			pthread_mutex_unlock(&philo->term_mutex);
+			return (NULL);
+		}
+		pthread_mutex_unlock(&philo->term_mutex);
 		timetook = ft_do_it(philo);
 		if (timetook == -1)
 			break ;
 		if (timetook == -2)
 			return (NULL);
-		if (philo->data->mineat != 0 && philo->data->mineat == philo->eatcount)
+		if (philo->data.mineat != 0 && philo->data.mineat == philo->eatcount)
 			return (NULL);
 		philo->lifecount += timetook;
-		printf("Philo%d - Lifecount:%ld\n", philo->nbr, philo->lifecount);
+		//printf("Philo%d - Lifecount:%ld\n", philo->nbr, philo->lifecount);
 	}
-	printf("%lu %i died\n", ft_gcts(philo->data->st), philo->nbr);
-	pthread_mutex_unlock(&philo->own.mutex);
+	ft_print_mutlti("died", ft_gcts(philo->data.st), philo->nbr);
 	pthread_mutex_unlock(&philo->right->mutex);
+	pthread_mutex_unlock(&philo->own.mutex);
 	return (NULL);
 }
 
@@ -98,11 +105,38 @@ int	ft_start_philos(t_philo *philos, int count)
 	return (SUCCESS);
 }
 
+void	ft_terminate_philo(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->term_mutex);
+	philo->terminate = 1;
+	pthread_mutex_unlock(&philo->term_mutex);
+}
+
 int	ft_wait_philos(t_philo *philos, int count)
 {
 	int	i;
+	int	x;
+	int	done_count;
 
 	i = 0;
+	done_count = 0;
+	while (done_count != count)
+	{
+		if (i >= count)
+			i = 0;
+		if (philos[i].data.mineat != 0
+			&& philos[i].eatcount >= philos[i].data.mineat)
+			done_count++;
+		if (philos[i].lifecount >= philos[i].data.ttd)
+		{
+			printf("TERMINATE!\n");
+			x = 0;
+			while (x < count)
+				ft_terminate_philo(&philos[x++]);
+			break ;
+		}
+		i++;
+	}
 	while (i < count)
 		pthread_join(philos[i++].tid, NULL);
 	return (SUCCESS);
@@ -140,11 +174,11 @@ int	main(int argc, char **argv)
 	philophs = ft_calloc(sizeof(t_philo), count);
 	if (philophs == NULL)
 		return (MALLOC_FAIL);
+	data.st = ft_currtime();
 	if (ft_init_philosophers(philophs, count, &data))
 		return (ft_destroy_philosophers(MALLOC_FAIL, philophs, count));
-	data.st = ft_currtime();
-	ft_start_philos(philophs, count);
 	ft_print_philos(philophs, count);
+	ft_start_philos(philophs, count);
 	ft_wait_philos(philophs, count);
 	return (ft_destroy_philosophers(SUCCESS, philophs, count));
 }
