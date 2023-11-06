@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 18:47:20 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/06 13:17:04 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/06 14:56:11 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	ft_fork_check(t_fork *fork)
 
 int	ft_took_forks(t_philo *philo)
 {
-	if (ft_fork_check(philo->right))
+	if (ft_fork_check(philo->right) || ft_fork_check(&philo->own))
 		return (0);
 	ft_lock(&philo->own);
 	ft_print_mutlti("has taken a fork", ft_gcts(philo->data.st), philo->nbr);

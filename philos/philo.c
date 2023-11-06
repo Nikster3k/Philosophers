@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 13:03:34 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/06 13:20:37 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/06 14:53:49 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ int	ft_get_terminate(t_philo *philo)
 	return (ret);
 }
 
-void	ft_set_terminate(t_philo *philo)
+void	ft_set_terminate(t_philo *philo, int val)
 {
 	pthread_mutex_lock(&philo->term_mutex);
-	philo->terminate = 1;
+	philo->terminate = val;
 	pthread_mutex_unlock(&philo->term_mutex);
 }
 
@@ -68,7 +68,7 @@ void	*ft_philo_main(void *void_philo)
 		if (philo->lifecount >= philo->data.ttd)
 		{
 			ft_print_mutlti("died", ft_gcts(philo->data.st), philo->nbr);
-			ft_set_terminate(philo);
+			ft_set_terminate(philo, 1);
 			break ;
 		}
 		timetook = ft_eat(philo);
@@ -104,7 +104,7 @@ int	ft_wait_philos(t_philo *philos, int count)
 		{
 			x = 0;
 			while (x < count)
-				ft_set_terminate(&philos[x++]);
+				ft_set_terminate(&philos[x++], 1);
 			break ;
 		}
 		i++;

@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/06 13:18:21 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/06 14:52:21 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,14 +76,13 @@ int	main(int argc, char **argv)
 	if (ft_check_args(argc, argv))
 		return (BAD_ARGS);
 	count = ft_init_data(argc, argv, &data);
-	printf("Number of philos: %i\n", count);
 	philophs = ft_calloc(sizeof(t_philo), count);
 	if (philophs == NULL)
 		return (MALLOC_FAIL);
 	data.st = ft_currtime();
 	if (ft_init_philosophers(philophs, count, &data))
 		return (ft_destroy_philosophers(MALLOC_FAIL, philophs, count));
-	ft_print_philos(philophs, count);
+	//ft_print_philos(philophs, count);
 	ft_start_philos(philophs, count);
 	ft_wait_philos(philophs, count);
 	return (ft_destroy_philosophers(SUCCESS, philophs, count));
