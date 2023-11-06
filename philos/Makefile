@@ -2,7 +2,7 @@ NAME = philo
 COMPILER = cc
 FLAGS = -Wall -Werror -Wextra -pthread -g
 
-SRCS = main.c utils.c time.c forks.c initialize_philosophers.c
+SRCS = main.c utils.c time.c philo.c forks.c initialize_philosophers.c
 
 OBJS = $(SRCS:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 12:12:52 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/05 20:17:40 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/06 13:14:43 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,9 @@ int	ft_init_philosophers(t_philo *philos, int count, t_lifedata *data)
 	i = 0;
 	while (i < count)
 	{
-		if (pthread_mutex_init(&philos[i].own.mutex, NULL))
-			return (MUTEX_INITFAIL);
-		if (pthread_mutex_init(&philos[i].own.check, NULL))
-			return (MUTEX_INITFAIL);
-		if (pthread_mutex_init(&philos[i].term_mutex, NULL))
+		if (pthread_mutex_init(&philos[i].own.mutex, NULL)
+			|| pthread_mutex_init(&philos[i].own.bool_mutex, NULL)
+			|| pthread_mutex_init(&philos[i].term_mutex, NULL))
 			return (MUTEX_INITFAIL);
 		i++;
 	}

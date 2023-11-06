@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 18:47:20 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/05 20:21:56 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/06 13:17:04 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@ int	ft_lock(t_fork	*fork)
 	int	out;
 
 	out = pthread_mutex_lock(&fork->mutex);
-	pthread_mutex_lock(&fork->check);
+	pthread_mutex_lock(&fork->bool_mutex);
 	fork->is_locked = 1;
-	pthread_mutex_unlock(&fork->check);
+	pthread_mutex_unlock(&fork->bool_mutex);
 	return (out);
 }
 
@@ -27,11 +27,11 @@ int	ft_unlock(t_fork *fork)
 {
 	int	out;
 
-	pthread_mutex_lock(&fork->check);
+	pthread_mutex_lock(&fork->bool_mutex);
 	fork->is_locked = 0;
-	pthread_mutex_unlock(&fork->check);
+	pthread_mutex_unlock(&fork->bool_mutex);
 	out = pthread_mutex_unlock(&fork->mutex);
-	return (0);
+	return (out);
 }
 
 int	ft_fork_check(t_fork *fork)
@@ -39,10 +39,11 @@ int	ft_fork_check(t_fork *fork)
 	int	ret;
 
 	ret = 0;
-	pthread_mutex_lock(&fork->check);
+	if (pthread_mutex_lock(&fork->bool_mutex))
+		return (1);
 	if (fork->is_locked)
 		ret = 1;
-	pthread_mutex_unlock(&fork->check);
+	pthread_mutex_unlock(&fork->bool_mutex);
 	return (ret);
 }
 

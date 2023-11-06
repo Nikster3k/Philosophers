@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:40:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/05 20:27:07 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/06 13:12:42 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ enum e_errors
 typedef struct s_fork
 {
 	pthread_mutex_t	mutex;
-	pthread_mutex_t	check;
+	pthread_mutex_t	bool_mutex;
 	char			is_locked;
 }	t_fork;
 
@@ -73,6 +73,12 @@ void	*ft_calloc(size_t nmemb, size_t size);
 int		ft_destroy_philosophers(int err, t_philo *phil, int count);
 int		ft_init_philosophers(t_philo *philos, int count, t_lifedata *data);
 int		ft_init_data(int argc, char **argv, t_lifedata *data);
+
+//philo.c
+long	ft_eat(t_philo *philo);
+void	*ft_philo_main(void *void_philo);
+int		ft_start_philos(t_philo *philos, int count);
+int		ft_wait_philos(t_philo *philos, int count);
 
 //time.c
 long	ft_tvtms(struct timeval *tv);
