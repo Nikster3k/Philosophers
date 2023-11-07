@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 18:47:20 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/07 19:27:21 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/07 19:59:42 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,7 @@ int	ft_fork_check(t_fork *fork)
 {
 	int	ret;
 
-	if (pthread_mutex_lock(&fork->bool_mutex))
-		return (-1);
+	pthread_mutex_lock(&fork->bool_mutex);
 	ret = fork->is_locked;
 	pthread_mutex_unlock(&fork->bool_mutex);
 	return (ret);
