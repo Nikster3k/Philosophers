@@ -6,55 +6,49 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 13:03:34 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/07 12:47:19 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/07 19:29:22 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	ft_get_terminate(t_philo *philo)
+int	ft_get_philo_state(t_philo *philo)
 {
 	int	ret;
 
 	pthread_mutex_lock(&philo->term_mutex);
-	ret = philo->terminate;
+	ret = philo->state;
 	pthread_mutex_unlock(&philo->term_mutex);
 	return (ret);
 }
 
-void	ft_set_terminate(t_philo *philo, int val)
+void	ft_set_philo_state(t_philo *philo, int val)
 {
 	pthread_mutex_lock(&philo->term_mutex);
-	philo->terminate = val;
+	philo->state = val;
 	pthread_mutex_unlock(&philo->term_mutex);
 }
 
 long	ft_try_eat(t_philo *philo)
 {
-	struct timeval	start;
-	struct timeval	end;
-	char			taken;
+	char	taken;
 
-	gettimeofday(&start, NULL);
 	taken = ft_took_forks(philo);
 	if (taken == 1)
 	{
-		if (ft_tvtms(&start) - ft_currtime() + philo->lifecount
-			>= philo->data.ttd)
+		if (ft_currtime() - philo->lasteat >= philo->data.ttd)
 			return (-1);
-		ft_print_mutlti("is eating", ft_gcts(philo->data.st), philo->nbr);
+		ft_print_multi("is eating", philo);
 		usleep(philo->data.tte * 1000);
 		philo->eatcount++;
-		philo->lifecount = -(philo->data.tte);
+		philo->lasteat = ft_currtime();
 		ft_drop_forks(philo);
-		ft_print_mutlti("is sleeping", ft_gcts(philo->data.st), philo->nbr);
+		ft_print_multi("is sleeping", philo);
 		usleep(philo->data.tts * 1000);
-		ft_print_mutlti("is thinking", ft_gcts(philo->data.st), philo->nbr);
+		ft_print_multi("is thinking", philo);
+		return (1);
 	}
-	else
-		usleep(1);
-	gettimeofday(&end, NULL);
-	return (ft_tvtms(&end) - ft_tvtms(&start));
+	return (0);
 }
 
 void	*ft_philo_main(void *void_philo)
@@ -63,25 +57,24 @@ void	*ft_philo_main(void *void_philo)
 	long	timetook;
 
 	philo = void_philo;
-	while (!ft_get_terminate(philo))
+	philo->lasteat = ft_currtime();
+	while (ft_get_philo_state(philo) == RUNNING)
 	{
-		if (philo->lifecount >= philo->data.ttd)
-		{
-			ft_print_mutlti("died", ft_gcts(philo->data.st), philo->nbr);
-			ft_set_terminate(philo, 1);
-			break ;
-		}
 		timetook = ft_try_eat(philo);
-		if (timetook == -1)
+		if (timetook == -1 || ft_currtime() - philo->lasteat >= philo->data.ttd)
 		{
-			ft_print_mutlti("died", ft_gcts(philo->data.st), philo->nbr);
-			ft_set_terminate(philo, 1);
+			ft_print_multi("died", philo);
+			ft_set_philo_state(philo, TERMINATE);
 			break ;
 		}
 		if (philo->data.mineat != 0 && philo->eatcount == philo->data.mineat)
+		{
+			ft_set_philo_state(philo, DONE);
 			break ;
-		philo->lifecount += timetook;
+		}
 	}
+	if (ft_fork_check(&philo->own) && ft_fork_check(philo->right))
+		ft_drop_forks(philo);
 	return (NULL);
 }
 
@@ -96,14 +89,13 @@ int	ft_wait_philos(t_philo *philos, int count)
 	while (done_count != count)
 	{
 		i *= (i < count);
-		if (philos[i].data.mineat != 0
-			&& philos[i].eatcount >= philos[i].data.mineat)
+		if (ft_get_philo_state(&philos[i]) == DONE)
 			done_count++;
-		if (ft_get_terminate(&philos[i]))
+		if (ft_get_philo_state(&philos[i]) == TERMINATE)
 		{
 			x = 0;
 			while (x < count)
-				ft_set_terminate(&philos[x++], 1);
+				ft_set_philo_state(&philos[x++], TERMINATE);
 			break ;
 		}
 		i++;

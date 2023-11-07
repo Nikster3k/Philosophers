@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 12:12:52 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/06 13:14:43 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/07 19:21:45 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,10 @@ int	ft_init_philosophers(t_philo *philos, int count, t_lifedata *data)
 	{
 		philos[i].data = *data;
 		philos[i].nbr = i + 1;
-		philos[i].lifecount = 0;
+		philos[i].lasteat = 0;
 		philos[i].eatcount = 0;
-		philos[i].terminate = 0;
+		philos[i].state = RUNNING;
+		philos[i].own.idx = philos[i].nbr;
 		if (i != count - 1)
 			philos[i].right = &philos[i + 1].own;
 		i++;

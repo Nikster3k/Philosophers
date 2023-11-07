@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 17:14:45 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/05 17:55:56 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/07 16:44:31 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,13 @@ long	ft_gcts(long start)
 	return (ft_currtime() - start);
 }
 
-void	ft_print_mutlti(char *str, long timestamp, int nbr)
+void	ft_print_multi(char *str, t_philo *philo)
 {
 	static pthread_mutex_t	mutex = PTHREAD_MUTEX_INITIALIZER;
 
+	if (ft_get_philo_state(philo) != RUNNING)
+		return ;
 	pthread_mutex_lock(&mutex);
-	printf("%lu %i %s\n", timestamp, nbr, str);
+	printf("%lu %i %s\n", ft_gcts(philo->data.st), philo->nbr, str);
 	pthread_mutex_unlock(&mutex);
 }

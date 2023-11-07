@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 18:47:20 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/07 12:26:49 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/07 19:27:21 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,18 +45,46 @@ int	ft_fork_check(t_fork *fork)
 	return (ret);
 }
 
+int	ft_get_fork_idx(t_fork *fork)
+{
+	int	idx;
+
+	pthread_mutex_lock(&fork->bool_mutex);
+	idx = fork->idx;
+	pthread_mutex_unlock(&fork->bool_mutex);
+	return (idx);
+}
+
 int	ft_took_forks(t_philo *philo)
 {
-	if (ft_fork_check(philo->right) || ft_fork_check(&philo->own))
-		return (0);
-	ft_lock(&philo->own);
-	ft_print_mutlti("has taken a fork", ft_gcts(philo->data.st), philo->nbr);
-	ft_lock(philo->right);
-	ft_print_mutlti("has taken a fork", ft_gcts(philo->data.st), philo->nbr);
+	if (ft_get_fork_idx(&philo->own) < ft_get_fork_idx(philo->right))
+	{
+		ft_lock(&philo->own);
+		ft_print_multi("has taken a fork", philo);
+		ft_lock(philo->right);
+		ft_print_multi("has taken a fork", philo);
+	}
+	else
+	{
+		ft_lock(philo->right);
+		ft_print_multi("has taken a fork", philo);
+		ft_lock(&philo->own);
+		ft_print_multi("has taken a fork", philo);
+	}
 	return (1);
 }
 
 int	ft_drop_forks(t_philo *philo)
 {
-	return (ft_unlock(&philo->own) || ft_unlock(philo->right));
+	if (ft_get_fork_idx(&philo->own) < ft_get_fork_idx(philo->right))
+	{
+		ft_unlock(philo->right);
+		ft_unlock(&philo->own);
+	}
+	else
+	{
+		ft_unlock(&philo->own);
+		ft_unlock(philo->right);
+	}
+	return (1);
 }
