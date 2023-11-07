@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 18:47:20 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/06 14:56:11 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/07 12:26:49 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,9 @@ int	ft_fork_check(t_fork *fork)
 {
 	int	ret;
 
-	ret = 0;
 	if (pthread_mutex_lock(&fork->bool_mutex))
-		return (1);
-	if (fork->is_locked)
-		ret = 1;
+		return (-1);
+	ret = fork->is_locked;
 	pthread_mutex_unlock(&fork->bool_mutex);
 	return (ret);
 }
@@ -60,8 +58,5 @@ int	ft_took_forks(t_philo *philo)
 
 int	ft_drop_forks(t_philo *philo)
 {
-	int	out;
-
-	out = ft_unlock(philo->right);
-	return (ft_unlock(&philo->own) || out);
+	return (ft_unlock(&philo->own) || ft_unlock(philo->right));
 }

@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 13:03:34 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/06 14:53:49 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/07 12:47:19 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	ft_set_terminate(t_philo *philo, int val)
 	pthread_mutex_unlock(&philo->term_mutex);
 }
 
-long	ft_eat(t_philo *philo)
+long	ft_try_eat(t_philo *philo)
 {
 	struct timeval	start;
 	struct timeval	end;
@@ -71,18 +71,17 @@ void	*ft_philo_main(void *void_philo)
 			ft_set_terminate(philo, 1);
 			break ;
 		}
-		timetook = ft_eat(philo);
+		timetook = ft_try_eat(philo);
 		if (timetook == -1)
 		{
 			ft_print_mutlti("died", ft_gcts(philo->data.st), philo->nbr);
+			ft_set_terminate(philo, 1);
 			break ;
 		}
 		if (philo->data.mineat != 0 && philo->eatcount == philo->data.mineat)
 			break ;
 		philo->lifecount += timetook;
 	}
-	ft_unlock(philo->right);
-	ft_unlock(&philo->own);
 	return (NULL);
 }
 
@@ -100,7 +99,7 @@ int	ft_wait_philos(t_philo *philos, int count)
 		if (philos[i].data.mineat != 0
 			&& philos[i].eatcount >= philos[i].data.mineat)
 			done_count++;
-		if (philos[i].terminate)
+		if (ft_get_terminate(&philos[i]))
 		{
 			x = 0;
 			while (x < count)

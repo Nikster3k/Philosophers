@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:40:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/06 13:12:42 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/07 12:47:45 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int		ft_init_philosophers(t_philo *philos, int count, t_lifedata *data);
 int		ft_init_data(int argc, char **argv, t_lifedata *data);
 
 //philo.c
-long	ft_eat(t_philo *philo);
+long	ft_try_eat(t_philo *philo);
 void	*ft_philo_main(void *void_philo);
 int		ft_start_philos(t_philo *philos, int count);
 int		ft_wait_philos(t_philo *philos, int count);
@@ -91,5 +91,6 @@ int		ft_lock(t_fork	*fork);
 int		ft_unlock(t_fork *fork);
 int		ft_took_forks(t_philo *philo);
 int		ft_drop_forks(t_philo *philo);
+int		ft_fork_check(t_fork *fork);
 
 #endif //!PHILO_H
