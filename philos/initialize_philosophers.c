@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initialize_philosophers.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nsassenb <nsassenb@students.42.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 12:12:52 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/07 19:21:45 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/08 14:59:48 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	ft_init_philosophers(t_philo *philos, int count, t_lifedata *data)
 		i++;
 	}
 	philos[count - 1].right = &philos[0].own;
-	return (SUCCESS);
+	return (EXIT_SUCCESS);
 }
 
 int	ft_init_data(int argc, char **argv, t_lifedata *data)

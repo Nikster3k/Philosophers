@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nsassenb <nsassenb@students.42.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 13:03:34 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/07 19:29:22 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/08 15:00:09 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,5 +103,5 @@ int	ft_wait_philos(t_philo *philos, int count)
 	i = 0;
 	while (i < count)
 		pthread_join(philos[i++].tid, NULL);
-	return (SUCCESS);
+	return (EXIT_SUCCESS);
 }

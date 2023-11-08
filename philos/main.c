@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nsassenb <nsassenb@students.42.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/06 14:52:21 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/08 15:00:01 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	ft_check_args(int argc, char **argv)
 				return (BAD_ARGS);
 		i++;
 	}
-	return (SUCCESS);
+	return (EXIT_SUCCESS);
 }
 
 int	ft_start_philos(t_philo *philos, int count)
@@ -64,7 +64,7 @@ int	ft_start_philos(t_philo *philos, int count)
 		pthread_create(&philos[i].tid, NULL, ft_philo_main, &philos[i]);
 		i++;
 	}
-	return (SUCCESS);
+	return (EXIT_SUCCESS);
 }
 
 int	main(int argc, char **argv)
@@ -85,5 +85,5 @@ int	main(int argc, char **argv)
 	//ft_print_philos(philophs, count);
 	ft_start_philos(philophs, count);
 	ft_wait_philos(philophs, count);
-	return (ft_destroy_philosophers(SUCCESS, philophs, count));
+	return (ft_destroy_philosophers(EXIT_SUCCESS, philophs, count));
 }

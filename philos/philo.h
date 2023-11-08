@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nsassenb <nsassenb@students.42.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:40:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/07 19:28:32 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/08 14:59:38 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,9 @@
 # include <unistd.h>
 # include <stdio.h>
 
-enum e_errors
-{
-	SUCCESS = 0,
-	BAD_ARGS,
-	MALLOC_FAIL,
-	MUTEX_INITFAIL,
-};
+# define MALLOC_FAIL 2
+# define BAD_ARGS 3
+# define MUTEX_INITFAIL 4
 
 typedef struct s_fork
 {
