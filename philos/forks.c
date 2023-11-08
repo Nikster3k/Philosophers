@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   forks.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nsassenb <nsassenb@students.42.fr>         +#+  +:+       +#+        */
+/*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 18:47:20 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/08 16:49:20 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/08 19:30:01 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,25 @@ int	ft_lock(t_fork	*fork)
 
 	out = pthread_mutex_lock(&fork->mutex);
 	pthread_mutex_lock(&fork->bool_mutex);
-	fork->is_locked = 1;
+	fork->owner = 1;
 	pthread_mutex_unlock(&fork->bool_mutex);
 	return (out);
+}
+
+int	ft_trylock(t_philo *philo, t_fork *fork)
+{
+	pthread_mutex_lock(&fork->bool_mutex);
+	if (fork->owner == philo->tid)
+		return (2);
+	if (fork->owner != 0)
+	{
+		pthread_mutex_unlock(&fork->bool_mutex);
+		return (0);
+	}
+	pthread_mutex_lock(&fork->mutex);
+	fork->owner = philo->tid;
+	pthread_mutex_unlock(&fork->bool_mutex);
+	return (1);
 }
 
 int	ft_unlock(t_fork *fork)
@@ -28,10 +44,24 @@ int	ft_unlock(t_fork *fork)
 	int	out;
 
 	pthread_mutex_lock(&fork->bool_mutex);
-	fork->is_locked = 0;
+	fork->owner = 0;
 	pthread_mutex_unlock(&fork->bool_mutex);
 	out = pthread_mutex_unlock(&fork->mutex);
 	return (out);
+}
+
+int	ft_tryunlock(t_philo *philo, t_fork *fork)
+{
+	pthread_mutex_lock(&fork->bool_mutex);
+	if (fork->owner != philo->tid)
+	{
+		pthread_mutex_unlock(&fork->bool_mutex);
+		return (0);
+	}
+	pthread_mutex_unlock(&fork->mutex);
+	fork->owner = 0;
+	pthread_mutex_unlock(&fork->bool_mutex);
+	return (1);
 }
 
 int	ft_fork_check(t_fork *fork)
@@ -39,65 +69,33 @@ int	ft_fork_check(t_fork *fork)
 	int	ret;
 
 	pthread_mutex_lock(&fork->bool_mutex);
-	ret = fork->is_locked;
+	ret = fork->owner;
 	pthread_mutex_unlock(&fork->bool_mutex);
 	return (ret);
 }
 
-int	ft_get_fork_idx(t_fork *fork)
-{
-	int	idx;
-
-	pthread_mutex_lock(&fork->bool_mutex);
-	idx = fork->idx;
-	pthread_mutex_unlock(&fork->bool_mutex);
-	return (idx);
-}
-
 int	ft_took_forks(t_philo *philo)
 {
-	if (ft_get_fork_idx(&philo->own) < ft_get_fork_idx(philo->right))
+	if (!ft_trylock(philo, &philo->own))
+		return (0);
+	if (ft_philo_check_death(philo))
 	{
-		if (ft_fork_check(&philo->own))
-			return (0);
-		ft_lock(&philo->own);
-		if (ft_fork_check(philo->right))
-		{
-			ft_unlock(&philo->own);
-			return (0);
-		}
-		ft_print_multi("has taken own fork", philo);
-		ft_lock(philo->right);
-		ft_print_multi("has taken right fork", philo);
+		ft_philo_die(philo);
+		return (0);
 	}
-	else
+	if (!ft_trylock(philo, philo->right))
 	{
-		if (ft_fork_check(philo->right))
-			return (0);
-		ft_lock(philo->right);
-		if (ft_fork_check(&philo->own))
-		{
-			ft_unlock(philo->right);
-			return (0);
-		}
-		ft_print_multi("has taken right fork", philo);
-		ft_lock(&philo->own);
-		ft_print_multi("has taken own fork", philo);
+		ft_unlock(&philo->own);
+		return (0);
 	}
+	ft_print_multi("has taken own fork", philo);
+	ft_print_multi("has taken right fork", philo);
 	return (1);
 }
 
 int	ft_drop_forks(t_philo *philo)
 {
-	if (ft_get_fork_idx(&philo->own) < ft_get_fork_idx(philo->right))
-	{
-		ft_unlock(philo->right);
-		ft_unlock(&philo->own);
-	}
-	else
-	{
-		ft_unlock(&philo->own);
-		ft_unlock(philo->right);
-	}
+	ft_unlock(philo->right);
+	ft_unlock(&philo->own);
 	return (1);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   initialize_philosophers.c                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nsassenb <nsassenb@students.42.fr>         +#+  +:+       +#+        */
+/*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 12:12:52 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/08 14:59:48 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/08 19:13:55 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,8 @@ int	ft_init_philosophers(t_philo *philos, int count, t_lifedata *data)
 	i = 0;
 	while (i < count)
 	{
-		philos[i].data = *data;
-		philos[i].nbr = i + 1;
-		philos[i].lasteat = 0;
-		philos[i].eatcount = 0;
-		philos[i].state = RUNNING;
-		philos[i].own.idx = philos[i].nbr;
+		philos[i] = (t_philo){philos[i].tid, *data, i + 1, 0, 0,
+			philos[i].own, NULL, philos[i].term_mutex, RUNNING};
 		if (i != count - 1)
 			philos[i].right = &philos[i + 1].own;
 		i++;
