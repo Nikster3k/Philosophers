@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:40:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/08 19:00:32 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/08 19:39:11 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,8 @@ void	ft_print_multi(char *str, t_philo *philo);
 //forks.c
 int		ft_trylock(t_philo *philo, t_fork *fork);
 int		ft_tryunlock(t_philo *philo, t_fork *fork);
+int		ft_fork_check(t_philo *philo, t_fork *fork);
 int		ft_took_forks(t_philo *philo);
 int		ft_drop_forks(t_philo *philo);
-int		ft_fork_check(t_fork *fork);
 
 #endif //!PHILO_H
