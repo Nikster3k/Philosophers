@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@students.42.fr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 13:03:34 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/08 15:00:09 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/08 16:50:41 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void	*ft_philo_main(void *void_philo)
 	long	timetook;
 
 	philo = void_philo;
+	philo->data.st = ft_currtime();
 	philo->lasteat = ft_currtime();
 	while (ft_get_philo_state(philo) == RUNNING)
 	{
