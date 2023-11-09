@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:40:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/08 19:39:11 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/09 13:25:05 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ typedef struct s_philo
 }	t_philo;
 
 //utils.c
+void	ft_print_multi(char *str, t_philo *philo);
 int		ft_isdigit(char c);
 long	ft_atol(const char *nptr);
 void	*ft_calloc(size_t nmemb, size_t size);
@@ -79,13 +80,14 @@ void	ft_set_philo_state(t_philo *philo, int val);
 
 //philo_utils.c
 int		ft_philo_check_death(t_philo *philo);
-void	ft_philo_wait(t_philo *philo, int sleep_ms);
+void	ft_philo_sleep(t_philo *philo, int sleep_ms);
 void	ft_philo_die(t_philo *philo);
+void	*ft_philo_solo(void *philo_void);
+
 //time.c
 long	ft_tvtms(struct timeval *tv);
 long	ft_currtime(void);
 long	ft_gcts(long start);
-void	ft_print_multi(char *str, t_philo *philo);
 
 //forks.c
 int		ft_trylock(t_philo *philo, t_fork *fork);

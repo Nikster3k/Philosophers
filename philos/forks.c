@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 18:47:20 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/08 19:42:07 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/09 13:07:49 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	ft_took_forks(t_philo *philo)
 		ft_philo_die(philo);
 		return (0);
 	}
-	if (!ft_trylock(philo, philo->right))
+	if (ft_trylock(philo, philo->right) == 2)
 	{
 		ft_tryunlock(philo, &philo->own);
 		return (0);

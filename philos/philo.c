@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 13:03:34 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/08 19:36:49 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/09 13:31:56 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ long	ft_try_eat(t_philo *philo)
 			return (-1);
 		ft_print_multi("is eating", philo);
 		philo->lasteat = ft_currtime();
-		ft_philo_wait(philo, philo->data.tte);
+		ft_philo_sleep(philo, philo->data.tte);
 		philo->eatcount++;
 		ft_drop_forks(philo);
 		ft_print_multi("is sleeping", philo);
-		ft_philo_wait(philo, philo->data.tts);
+		ft_philo_sleep(philo, philo->data.tts);
 		ft_print_multi("is thinking", philo);
 		return (1);
 	}
@@ -56,7 +56,7 @@ void	*ft_philo_main(void *void_philo)
 	philo = void_philo;
 	philo->lasteat = ft_currtime();
 	if (philo->tid % 2)
-		ft_philo_wait(philo, 10);
+		ft_philo_sleep(philo, 10);
 	while (ft_get_philo_state(philo) == RUNNING)
 	{
 		timetook = ft_try_eat(philo);
@@ -79,7 +79,6 @@ void	*ft_philo_main(void *void_philo)
 int	ft_wait_philos(t_philo *philos, int count)
 {
 	int	i;
-	int	x;
 	int	done_count;
 
 	i = 0;
@@ -91,9 +90,9 @@ int	ft_wait_philos(t_philo *philos, int count)
 			done_count++;
 		if (ft_get_philo_state(&philos[i]) == TERMINATE)
 		{
-			x = 0;
-			while (x < count)
-				ft_set_philo_state(&philos[x++], TERMINATE);
+			i = 0;
+			while (i < count)
+				ft_set_philo_state(&philos[i++], TERMINATE);
 			break ;
 		}
 		i++;

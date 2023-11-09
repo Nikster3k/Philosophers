@@ -6,11 +6,23 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:45:26 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/01 13:57:35 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/09 13:31:39 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	ft_print_multi(char *str, t_philo *philo)
+{
+	static pthread_mutex_t	mutex = PTHREAD_MUTEX_INITIALIZER;
+
+	if (ft_get_philo_state(philo) != RUNNING)
+		return ;
+	pthread_mutex_lock(&mutex);
+	if (ft_get_philo_state(philo) != TERMINATE)
+		printf("% -8ld % -5i %s\n", ft_gcts(philo->data.st), philo->nbr, str);
+	pthread_mutex_unlock(&mutex);
+}
 
 int	ft_isdigit(char c)
 {

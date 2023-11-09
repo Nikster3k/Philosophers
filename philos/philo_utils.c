@@ -6,11 +6,22 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 18:34:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/08 19:24:32 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/09 14:19:56 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	*ft_philo_solo(void *philo_void)
+{
+	t_philo	*philo;
+
+	philo = philo_void;
+	philo->lasteat = ft_currtime();
+	ft_philo_sleep(philo, philo->data.ttd);
+	ft_philo_die(philo);
+	return (NULL);
+}
 
 int	ft_philo_check_death(t_philo *philo)
 {
@@ -19,13 +30,14 @@ int	ft_philo_check_death(t_philo *philo)
 
 void	ft_philo_die(t_philo *philo)
 {
-	ft_print_multi("died", philo);
+	if (ft_get_philo_state(philo) == RUNNING)
+		ft_print_multi("died", philo);
 	ft_set_philo_state(philo, TERMINATE);
 	ft_tryunlock(philo, philo->right);
 	ft_tryunlock(philo, &philo->own);
 }
 
-void	ft_philo_wait(t_philo *philo, int sleep_ms)
+void	ft_philo_sleep(t_philo *philo, int sleep_ms)
 {
 	long	max_sleep;
 
@@ -36,7 +48,7 @@ void	ft_philo_wait(t_philo *philo, int sleep_ms)
 		usleep(1000);
 		if (ft_philo_check_death(philo))
 		{
-			ft_set_philo_state(philo, TERMINATE);
+			ft_philo_die(philo);
 			return ;
 		}
 	}

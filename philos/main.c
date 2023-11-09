@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nsassenb <nsassenb@students.42.fr>         +#+  +:+       +#+        */
+/*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/08 15:00:01 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/09 14:20:15 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,11 @@ int	ft_start_philos(t_philo *philos, int count)
 	int	i;
 
 	i = 0;
+	if (count == 1)
+	{
+		pthread_create(&philos[0].tid, NULL, ft_philo_solo, &philos[0]);
+		return (EXIT_SUCCESS);
+	}
 	while (i < count)
 	{
 		pthread_create(&philos[i].tid, NULL, ft_philo_main, &philos[i]);
@@ -82,7 +87,6 @@ int	main(int argc, char **argv)
 	data.st = ft_currtime();
 	if (ft_init_philosophers(philophs, count, &data))
 		return (ft_destroy_philosophers(MALLOC_FAIL, philophs, count));
-	//ft_print_philos(philophs, count);
 	ft_start_philos(philophs, count);
 	ft_wait_philos(philophs, count);
 	return (ft_destroy_philosophers(EXIT_SUCCESS, philophs, count));
