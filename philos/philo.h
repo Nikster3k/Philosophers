@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:40:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/09 13:25:05 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/11 23:36:42 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,5 +95,9 @@ int		ft_tryunlock(t_philo *philo, t_fork *fork);
 int		ft_fork_check(t_philo *philo, t_fork *fork);
 int		ft_took_forks(t_philo *philo);
 int		ft_drop_forks(t_philo *philo);
+
+//fork_utils.c
+pthread_t	ft_get_owner(t_fork *fork);
+void		ft_set_owner(t_fork *fork, pthread_t tid);
 
 #endif //!PHILO_H

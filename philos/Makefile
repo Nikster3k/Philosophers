@@ -3,7 +3,7 @@ COMPILER = cc
 FLAGS = -Wall -Werror -Wextra -pthread -g
 
 SRCS =	main.c utils.c time.c philo.c philo_utils.c\
-		forks.c initialize_philosophers.c \
+		forks.c fork_utils.c initialize_philosophers.c \
 
 OBJS = $(SRCS:.c=.o)
 
