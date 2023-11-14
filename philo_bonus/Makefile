@@ -1,9 +1,9 @@
-NAME = philo
+NAME = philo_bonus
 COMPILER = cc
 FLAGS = -Wall -Werror -Wextra -pthread -g
 
-SRCS =	main.c utils.c time.c philo.c philo_utils.c\
-		forks.c fork_utils.c initialize_philosophers.c \
+SRCS =	main.c philo.c philo_utils.c \
+		time.c utils.c initialize_philosophers.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -23,4 +23,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: clean fclean re bonus all
+.PHONY: clean fclean re all clear

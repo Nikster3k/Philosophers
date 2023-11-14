@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 13:03:34 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/11 23:13:18 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/12 22:35:48 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,20 +29,20 @@ void	ft_set_philo_state(t_philo *philo, int val)
 	pthread_mutex_unlock(&philo->term_mutex);
 }
 
-long	ft_try_eat(t_philo *philo)
+int	ft_try_eat(t_philo *philo)
 {
 	if (ft_took_forks(philo))
 	{
 		if (ft_philo_check_death(philo))
 			return (-1);
-		ft_print_multi("is eating", philo);
+		ft_print_action("is eating", philo);
 		philo->lasteat = ft_currtime();
 		ft_philo_sleep(philo, philo->data.tte);
 		philo->eatcount++;
 		ft_drop_forks(philo);
-		ft_print_multi("is sleeping", philo);
+		ft_print_action("is sleeping", philo);
 		ft_philo_sleep(philo, philo->data.tts);
-		ft_print_multi("is thinking", philo);
+		ft_print_action("is thinking", philo);
 		return (1);
 	}
 	return (0);
@@ -51,14 +51,12 @@ long	ft_try_eat(t_philo *philo)
 void	*ft_philo_main(void *void_philo)
 {
 	t_philo	*philo;
-	long	timetook;
 
 	philo = void_philo;
 	philo->lasteat = ft_currtime();
 	while (ft_get_philo_state(philo) == RUNNING)
 	{
-		timetook = ft_try_eat(philo);
-		if (timetook == -1 || ft_philo_check_death(philo))
+		if (ft_try_eat(philo) == -1 || ft_philo_check_death(philo))
 		{
 			ft_philo_die(philo);
 			break ;

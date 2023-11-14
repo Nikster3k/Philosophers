@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 18:47:20 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/11 23:36:14 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/12 22:35:48 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,9 @@ int	ft_took_forks(t_philo *philo)
 		if (right)
 		{
 			if (own == 1)
-				ft_print_multi("has taken a fork", philo);
+				ft_print_action("has taken a fork", philo);
 			if (right == 1)
-				ft_print_multi("has taken a fork", philo);
+				ft_print_action("has taken a fork", philo);
 			return (1);
 		}
 		ft_tryunlock(philo, &philo->own);

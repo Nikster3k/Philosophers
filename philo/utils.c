@@ -6,13 +6,13 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:45:26 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/09 13:31:39 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/12 22:35:48 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_print_multi(char *str, t_philo *philo)
+void	ft_print_action(char *str, t_philo *philo)
 {
 	static pthread_mutex_t	mutex = PTHREAD_MUTEX_INITIALIZER;
 
