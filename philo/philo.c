@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 13:03:34 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/12 22:35:48 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/15 18:39:53 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ int	ft_try_eat(t_philo *philo)
 		if (ft_philo_check_death(philo))
 			return (-1);
 		ft_print_action("is eating", philo);
+		usleep(philo->data.tte * 1000);
 		philo->lasteat = ft_currtime();
-		ft_philo_sleep(philo, philo->data.tte);
 		philo->eatcount++;
 		ft_drop_forks(philo);
 		ft_print_action("is sleeping", philo);
@@ -54,6 +54,7 @@ void	*ft_philo_main(void *void_philo)
 
 	philo = void_philo;
 	philo->lasteat = ft_currtime();
+	ft_print_action("is thinking", philo);
 	while (ft_get_philo_state(philo) == RUNNING)
 	{
 		if (ft_try_eat(philo) == -1 || ft_philo_check_death(philo))

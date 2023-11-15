@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:45:26 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/12 22:35:48 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/15 18:35:09 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	ft_print_action(char *str, t_philo *philo)
 		return ;
 	pthread_mutex_lock(&mutex);
 	if (ft_get_philo_state(philo) != TERMINATE)
-		printf("% -8ld % -5i %s\n", ft_gcts(philo->data.st), philo->nbr, str);
+		printf("%ld %i %s\n", ft_gcts(philo->data.st), philo->nbr, str);
 	pthread_mutex_unlock(&mutex);
 }
 

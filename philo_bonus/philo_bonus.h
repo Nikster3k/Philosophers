@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:40:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/12 23:59:21 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/15 17:48:11 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,7 @@
 # define SEMAPHORE_FAIL 4
 # define FORK_FAIL 5
 
-# define SEMA_NAME_FORKS "/forks_sema"
-# define SEMA_NAME_STATUS "/status_sema"
+# define SEMAPHORE_NAME "/forks_sema"
 
 typedef struct s_lifedata
 {
@@ -56,44 +55,23 @@ typedef struct s_philo
 	int			eatcount;
 	long		lasteat;
 	sem_t		*forks;
-	sem_t		*status;
 	t_state		state;
 }	t_philo;
 
-typedef struct s_observer
-{
-	pthread_t	tid;
-	pid_t		pid;
-}	t_observer;
-
-typedef struct s_threaddata
-{
-	t_observer	*obs;
-	int			idx;
-	int			count;
-}	t_threaddata;
-
 //philo.c
+int		ft_take_forks(t_philo *philo);
 int		ft_try_eat(t_philo *philo);
-int		ft_philo_main(t_philo *philo);
-int		ft_wait_philos(t_philo *philos, int count);
-int		ft_get_philo_state(t_philo *philo);
-void	ft_set_philo_state(t_philo *philo, int val);
+int 	ft_philo_main(t_philo *philo);
+void 	ft_wait_philos(pid_t first, int count);
 
 //philo_utils.c
-void	ft_set_state(t_philo *philo, t_state new_state);
-int		ft_get_state(t_philo *philo);
 int		ft_philo_check_death(t_philo *philo);
 void	ft_philo_sleep(t_philo *philo, int sleep_ms);
 void	ft_philo_die(t_philo *philo);
+void	ft_kill_philos(pid_t first, int count);
 
-//initalize_philosophers.c
-int		ft_init_philos(t_philo *philos, int count, t_lifedata data);
+//initialize_philosophers.c
 int		ft_init_data(int argc, char **argv, t_lifedata *data);
-
-//ft_itoa.c
-char	*ft_itoa(int n);
-int		ft_strlen(const char *str);
 
 //time.c
 long	ft_tvtms(struct timeval *tv);

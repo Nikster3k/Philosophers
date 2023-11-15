@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:45:26 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/12 22:22:18 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/15 18:28:53 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 void	ft_print_action(char *str, t_philo *philo)
 {
-	if (ft_get_state(philo) != RUNNING)
+	if (philo->state != RUNNING)
 		return ;
-	if (ft_get_state(philo) != TERMINATE)
-		printf("% -8ld % -5i %s\n", ft_gcts(philo->data.st), philo->nbr, str);
+	if (philo->state != TERMINATE)
+		printf("%ld %i %s\n", ft_gcts(philo->data.st), philo->nbr, str);
 }
 
 int	ft_isdigit(char c)

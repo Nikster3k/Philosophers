@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 13:51:52 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/13 00:08:43 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/15 18:28:28 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,95 +32,57 @@ int	ft_check_args(int argc, char **argv)
 	return (EXIT_SUCCESS);
 }
 
-void	ft_kill_all(t_philo *philos, int count, int ret)
+void	ft_init_philo(t_philo *philo, int idx)
 {
-	int	i;
-
-	if (WEXITSTATUS(ret) != 2)
-		return ;
-	printf("Kill all!\n");
-	i = 0;
-	while (i < count)
-	{
-		ft_set_state(&philos[i], TERMINATE);
-		printf("Killed: %i\n", philos[i].nbr);
-		i++;
-	}
+	philo->nbr = idx + 1;
+	philo->eatcount = 0;
+	philo->state = RUNNING;
 }
 
-int	ft_start_processes(t_philo *philo, int count)
+pid_t	ft_start_philos(t_philo *philo, int count)
 {
-	pid_t	temp;
-	int		i;
-
-	i = 0;
-	while (i < count)
-	{
-		temp = fork();
-		if (temp == 0)
-		{
-			int	ecode;
-
-			ecode = ft_philo_main(&philo[i]);
-			return (ecode);
-		}
-		else if (temp == -1)
-			return (-1);
-		i++;
-	}
-	return (0);
-}
-
-int	ft_wait_for_process(t_philo *philos, int count)
-{
-	int		i;
+	pid_t	curr;
+	pid_t	first;
 	int		ret;
-	pid_t	returnee;
+	int		i;
 
 	i = 0;
-	returnee = 0;
 	while (i < count)
 	{
-		returnee = waitpid(0, &ret, 0);
-		printf("%i has Exit ret=%i\n", returnee, WEXITSTATUS(ret));
-		if (WEXITSTATUS(ret) == 2)
-			ft_kill_all(philos, count, ret);
+		ft_init_philo(philo, i);
+		curr = fork();
+		if (curr == 0)
+		{
+			ret = ft_philo_main(philo);
+			sem_close(philo->forks);
+			exit(ret);
+		}
+		else if (curr && i == 0)
+			first = curr;
+		else if (curr == -1)
+			break ;
 		i++;
 	}
-	return (EXIT_SUCCESS);
-}
-
-void	ft_destoy_semaphores(t_philo *philos)
-{
-	sem_close(philos->status);
-	sem_close(philos->forks);
-	sem_unlink(SEMA_NAME_FORKS);
-	sem_unlink(SEMA_NAME_STATUS);
+	return (first);
 }
 
 int	main(int argc, char **argv)
 {
-	t_philo		*philos;
+	t_philo		philo;
 	t_lifedata	data;
 	int			count;
-	int			ret;
+	pid_t		first;
 
 	if (ft_check_args(argc, argv))
 		return (BAD_ARGS);
 	count = ft_init_data(argc, argv, &data);
-	philos = ft_calloc(count, sizeof(t_philo));
-	if (philos == NULL)
-		return (MALLOC_FAIL);
-	if (ft_init_philos(philos, count, data))
-	{
-		ft_destoy_semaphores(philos);
-		free(philos);
+	philo.data = data;
+	philo.forks = sem_open(SEMAPHORE_NAME, O_CREAT, 0644, count);
+	if (philo.forks == SEM_FAILED)
 		return (SEMAPHORE_FAIL);
-	}
-	ret = ft_start_processes(philos, count);
-	if (ret > 0)
-		return (ret);
-	ft_wait_for_process(philos, count);
-	ft_destoy_semaphores(philos);
+	first = ft_start_philos(&philo, count);
+	ft_wait_philos(first, count);
+	sem_close(philo.forks);
+	sem_unlink(SEMAPHORE_NAME);
 	return (0);
 }
