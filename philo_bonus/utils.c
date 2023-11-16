@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:45:26 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/15 18:28:53 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/16 15:40:12 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	ft_print_action(char *str, t_philo *philo)
 {
 	if (philo->state != RUNNING)
 		return ;
-	if (philo->state != TERMINATE)
+	if (philo->state == RUNNING)
 		printf("%ld %i %s\n", ft_gcts(philo->data.st), philo->nbr, str);
 }
 

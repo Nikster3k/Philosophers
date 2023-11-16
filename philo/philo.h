@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:40:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/15 18:27:50 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:11:21 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int			ft_start_philos(t_philo *philos, int count);
 //philo.c
 int			ft_try_eat(t_philo *philo);
 void		*ft_philo_main(void *void_philo);
-int			ft_wait_philos(t_philo *philos, int count);
+int			ft_kill_cascade(t_philo *philos, int count);
 int			ft_get_philo_state(t_philo *philo);
 void		ft_set_philo_state(t_philo *philo, int val);
 

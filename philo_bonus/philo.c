@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 13:03:34 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/15 18:43:18 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/16 15:40:12 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,10 @@ int	ft_take_forks(t_philo *philo)
 
 int	ft_try_eat(t_philo *philo)
 {
-	if (ft_take_forks(philo) == 1)
+	int	out;
+
+	out = ft_take_forks(philo);
+	if (out == 1)
 	{
 		ft_print_action("is eating", philo);
 	//	printf("%i Eats with %ldms left\n", philo->nbr, ft_currtime() - philo->lasteat);
@@ -48,7 +51,7 @@ int	ft_try_eat(t_philo *philo)
 		ft_print_action("is sleeping", philo);
 		ft_philo_sleep(philo, philo->data.tts);
 	}
-	return (1);
+	return (out);
 }
 
 int	ft_philo_main(t_philo *philo)

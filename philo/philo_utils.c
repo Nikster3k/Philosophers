@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/08 18:34:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/12 22:35:48 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:42:25 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@ void	ft_philo_die(t_philo *philo)
 	if (ft_get_philo_state(philo) == RUNNING)
 		ft_print_action("died", philo);
 	ft_set_philo_state(philo, TERMINATE);
-	ft_tryunlock(philo, philo->right);
-	ft_tryunlock(philo, &philo->own);
 }
 
 void	ft_philo_sleep(t_philo *philo, int sleep_ms)

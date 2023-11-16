@@ -6,31 +6,23 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/09 14:20:15 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/16 16:53:54 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_print_data(t_lifedata data)
+void	ft_wait_threads(t_philo *philos, int count)
 {
-	printf("Time to die: %i\n", data.ttd);
-	printf("Time to eat: %i\n", data.tte);
-	printf("Time to sleep: %i\n", data.tts);
-	printf("Min amount of eat: %i\n", data.mineat);
-}
-
-void	ft_print_philos(t_philo *phil, int count)
-{
-	int	i;
+	void	*ret;
+	int		i;
 
 	i = 0;
-	ft_print_data(phil[0].data);
 	while (i < count)
 	{
-		printf("Number: %i | thread id: %lu\n", phil[i].nbr, phil[i].tid);
-		printf("Own: %p | Right: %p\n",
-			&phil[i].own.mutex, &phil[i].right->mutex);
+		// printf("Philo %i state: %i\n", philos[i].nbr, ft_get_philo_state(&philos[i]));
+		pthread_join(philos[i].tid, &ret);
+		// printf("Philo %i returned: %p\n", philos[i].nbr, ret);
 		i++;
 	}
 }
@@ -88,6 +80,7 @@ int	main(int argc, char **argv)
 	if (ft_init_philosophers(philophs, count, &data))
 		return (ft_destroy_philosophers(MALLOC_FAIL, philophs, count));
 	ft_start_philos(philophs, count);
-	ft_wait_philos(philophs, count);
+	ft_kill_cascade(philophs, count);
+	ft_wait_threads(philophs, count);
 	return (ft_destroy_philosophers(EXIT_SUCCESS, philophs, count));
 }
