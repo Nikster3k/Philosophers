@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 13:03:34 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/16 15:40:12 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/17 14:38:59 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,8 @@ int	ft_try_eat(t_philo *philo)
 	if (out == 1)
 	{
 		ft_print_action("is eating", philo);
-	//	printf("%i Eats with %ldms left\n", philo->nbr, ft_currtime() - philo->lasteat);
-		usleep(philo->data.tte * 1000);
 		philo->lasteat = ft_currtime();
+		usleep(philo->data.tte * 1000);
 		philo->eatcount++;
 		sem_post(philo->forks);
 		sem_post(philo->forks);

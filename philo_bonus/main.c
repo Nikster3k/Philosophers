@@ -6,12 +6,11 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 13:51:52 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/16 13:54:37 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/17 14:38:30 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
-
 
 int	ft_check_args(int argc, char **argv)
 {
@@ -43,7 +42,6 @@ pid_t	ft_start_philos(t_philo *philo, int count)
 {
 	pid_t	curr;
 	pid_t	first;
-	int		ret;
 	int		i;
 
 	i = 0;
@@ -53,14 +51,17 @@ pid_t	ft_start_philos(t_philo *philo, int count)
 		curr = fork();
 		if (curr == 0)
 		{
-			ret = ft_philo_main(philo);
+			first = ft_philo_main(philo);
 			sem_close(philo->forks);
-			exit(ret);
+			exit(first);
 		}
 		else if (curr && i == 0)
 			first = curr;
 		else if (curr == -1)
+		{
+			ft_kill_philos(first, i);
 			break ;
+		}
 		i++;
 	}
 	return (first);

@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:40:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/15 17:48:11 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/17 13:27:34 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ typedef struct s_philo
 //philo.c
 int		ft_take_forks(t_philo *philo);
 int		ft_try_eat(t_philo *philo);
-int 	ft_philo_main(t_philo *philo);
-void 	ft_wait_philos(pid_t first, int count);
+int		ft_philo_main(t_philo *philo);
+void	ft_wait_philos(pid_t first, int count);
 
 //philo_utils.c
 int		ft_philo_check_death(t_philo *philo);

@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/16 16:53:54 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/16 17:19:12 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,7 @@ void	ft_wait_threads(t_philo *philos, int count)
 
 	i = 0;
 	while (i < count)
-	{
-		// printf("Philo %i state: %i\n", philos[i].nbr, ft_get_philo_state(&philos[i]));
-		pthread_join(philos[i].tid, &ret);
-		// printf("Philo %i returned: %p\n", philos[i].nbr, ret);
-		i++;
-	}
+		pthread_join(philos[i++].tid, &ret);
 }
 
 int	ft_check_args(int argc, char **argv)
