@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/04 18:47:20 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/16 16:52:50 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/17 18:12:04 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,55 +43,55 @@ int	ft_fork_check(t_philo *philo, t_fork *fork)
 	return (ft_get_owner(fork) == philo->tid);
 }
 
+// int	ft_took_forks(t_philo *philo)
+// {
+// 	int	own;
+// 	int	right;
+
+// 	if (philo->nbr == 1)
+// 	{
+// 		right = ft_trylock(philo, philo->right);
+// 		own = ft_trylock(philo, &philo->own);
+// 	}
+// 	else
+// 	{
+// 		own = ft_trylock(philo, &philo->own);
+// 		right = ft_trylock(philo, philo->right);
+// 	}
+// 	if (own)
+// 	{
+// 		if (own == 1)
+// 			ft_print_action("has taken a fork", philo);
+// 	}
+// 	if (right)
+// 	{
+// 		if (right == 1)
+// 			ft_print_action("has taken a fork", philo);
+// 	}
+// 	return (own && right);
+// }
+
 int	ft_took_forks(t_philo *philo)
 {
 	int	own;
 	int	right;
 
-	if (philo->nbr == 1)
-	{
-		right = ft_trylock(philo, philo->right);
-		own = ft_trylock(philo, &philo->own);
-	}
-	else
-	{
-		own = ft_trylock(philo, &philo->own);
-		right = ft_trylock(philo, philo->right);
-	}
+	own = ft_trylock(philo, &philo->own);
 	if (own)
 	{
-		if (own == 1)
-			ft_print_action("has taken a fork", philo);
+		right = ft_trylock(philo, philo->right);
+		if (right)
+		{
+			if (own == 1)
+				ft_print_action("has taken a fork", philo);
+			if (right == 1)
+				ft_print_action("has taken a fork", philo);
+			return (1);
+		}
+		ft_tryunlock(philo, &philo->own);
 	}
-	if (right)
-	{
-		if (right == 1)
-			ft_print_action("has taken a fork", philo);
-	}
-	return (own && right);
+	return (0);
 }
-
-// int	ft_sssstook_forks(t_philo *philo)
-// {
-// 	int	own;
-// 	int	right;
-
-// 	own = ft_trylock(philo, &philo->own);
-// 	if (own)
-// 	{
-// 		right = ft_trylock(philo, philo->right);
-// 		if (right)
-// 		{
-// 			if (own == 1)
-// 				ft_print_action("has taken a fork", philo);
-// 			if (right == 1)
-// 				ft_print_action("has taken a fork", philo);
-// 			return (1);
-// 		}
-// 		ft_tryunlock(philo, &philo->own);
-// 	}
-// 	return (0);
-// }
 
 int	ft_drop_forks(t_philo *philo)
 {

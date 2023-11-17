@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/12 13:51:52 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/17 14:38:30 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/17 17:59:29 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ pid_t	ft_start_philos(t_philo *philo, int count)
 	{
 		ft_init_philo(philo, i);
 		curr = fork();
+		philo->data.st = ft_currtime();
 		if (curr == 0)
 		{
 			first = ft_philo_main(philo);

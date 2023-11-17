@@ -6,15 +6,26 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/06 13:03:34 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/17 14:38:59 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/17 18:01:35 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
+int	ft_try_take_fork(t_philo *philo)
+{
+	while (philo->forks->__align <= 0)
+		ft_philo_sleep(philo, 1);
+	if (philo->state == TERMINATE)
+		return (-1);
+	sem_wait(philo->forks);
+	return (1);
+}
+
 int	ft_take_forks(t_philo *philo)
 {
-	sem_wait(philo->forks);
+	if (ft_try_take_fork(philo) == -1)
+		return (-1);
 	ft_print_action("has taken a fork", philo);
 	if (ft_philo_check_death(philo))
 	{
@@ -22,7 +33,11 @@ int	ft_take_forks(t_philo *philo)
 		ft_philo_die(philo);
 		return (-1);
 	}
-	sem_wait(philo->forks);
+	if (ft_try_take_fork(philo) == -1)
+	{
+		sem_post(philo->forks);
+		return (-1);
+	}
 	ft_print_action("has taken a fork", philo);
 	if (ft_philo_check_death(philo))
 	{
@@ -43,7 +58,7 @@ int	ft_try_eat(t_philo *philo)
 	{
 		ft_print_action("is eating", philo);
 		philo->lasteat = ft_currtime();
-		usleep(philo->data.tte * 1000);
+		ft_philo_sleep(philo, philo->data.tte);
 		philo->eatcount++;
 		sem_post(philo->forks);
 		sem_post(philo->forks);
