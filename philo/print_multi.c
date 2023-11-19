@@ -1,32 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   time.c                                             :+:      :+:    :+:   */
+/*   print_multi.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/04 17:14:45 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/12 17:40:20 by nsassenb         ###   ########.fr       */
+/*   Created: 2023/11/19 23:54:13 by nsassenb          #+#    #+#             */
+/*   Updated: 2023/11/20 00:17:56 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_bonus.h"
+#include "philo.h"
 
-long	ft_tvtms(struct timeval *tv)
+void	ft_print_action(char *str, t_philo *philo, long time_stamp)
 {
-	return ((tv->tv_sec * 1000) + (tv->tv_usec / 1000));
-}
+	static pthread_mutex_t	mutex = PTHREAD_MUTEX_INITIALIZER;
 
-long	ft_currtime(void)
-{
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return (ft_tvtms(&tv));
-}
-
-//get current time from start
-long	ft_gcts(long start)
-{
-	return (ft_currtime() - start);
+	if (philo->state != RUNNING || ft_sim_running(philo) != RUNNING)
+		return ;
+	pthread_mutex_lock(&mutex);
+	if (philo->state == RUNNING && ft_sim_running(philo) == RUNNING)
+		printf("%ld %i %s\n", time_stamp, philo->nbr, str);
+	pthread_mutex_unlock(&mutex);
 }

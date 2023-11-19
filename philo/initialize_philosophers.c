@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 12:12:52 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/08 19:13:55 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/19 18:50:53 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ int	ft_destroy_philosophers(int err, t_philo *phil, int count)
 	return (err);
 }
 
-int	ft_init_philosophers(t_philo *philos, int count, t_lifedata *data)
+int	ft_init_philosophers(t_philo *philos, int count, t_lifedata *data,
+	t_state *sim_state)
 {
 	int		i;
 
@@ -42,7 +43,7 @@ int	ft_init_philosophers(t_philo *philos, int count, t_lifedata *data)
 	while (i < count)
 	{
 		philos[i] = (t_philo){philos[i].tid, *data, i + 1, 0, 0,
-			philos[i].own, NULL, philos[i].term_mutex, RUNNING};
+			philos[i].own, NULL, RUNNING, philos[i].term_mutex, sim_state};
 		if (i != count - 1)
 			philos[i].right = &philos[i + 1].own;
 		i++;

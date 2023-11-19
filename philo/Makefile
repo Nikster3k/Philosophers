@@ -1,22 +1,26 @@
 NAME = philo
 COMPILER = cc
 FLAGS = -Wall -Werror -Wextra -pthread -g
+OBJ_FOLDER = objs/
 
 SRCS =	main.c utils.c time.c philo.c philo_utils.c\
-		forks.c fork_utils.c initialize_philosophers.c \
+		initialize_philosophers.c fork.c print_multi.c\
 
-OBJS = $(SRCS:.c=.o)
+OBJS = $(addprefix $(OBJ_FOLDER), $(SRCS:.c=.o))
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJ_FOLDER) $(OBJS)
 	$(COMPILER) $(FLAGS) $(OBJS) -o $(NAME)
 
-%.o: %.c
+$(OBJ_FOLDER):
+	mkdir $(OBJ_FOLDER)
+
+$(OBJ_FOLDER)%.o: %.c
 	$(COMPILER) $(FLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS)
+	rm -rf $(OBJ_FOLDER)
 
 fclean: clean
 	rm -f $(NAME)

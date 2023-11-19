@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/16 17:19:12 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/20 00:18:38 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,16 @@ int	ft_check_args(int argc, char **argv)
 	return (EXIT_SUCCESS);
 }
 
+int	ft_sim_running(t_philo *philo)
+{
+	int	ret;
+
+	pthread_mutex_lock(&philo->term_mutex);
+	ret = *(philo->term_state);
+	pthread_mutex_unlock(&philo->term_mutex);
+	return (ret);
+}
+
 int	ft_start_philos(t_philo *philos, int count)
 {
 	int	i;
@@ -62,6 +72,7 @@ int	ft_start_philos(t_philo *philos, int count)
 int	main(int argc, char **argv)
 {
 	t_philo		*philophs;
+	t_state		sim_state;
 	t_lifedata	data;
 	int			count;
 
@@ -72,10 +83,13 @@ int	main(int argc, char **argv)
 	if (philophs == NULL)
 		return (MALLOC_FAIL);
 	data.st = ft_currtime();
-	if (ft_init_philosophers(philophs, count, &data))
+	sim_state = STOP;
+	if (ft_init_philosophers(philophs, count, &data, &sim_state))
 		return (ft_destroy_philosophers(MALLOC_FAIL, philophs, count));
 	ft_start_philos(philophs, count);
-	ft_kill_cascade(philophs, count);
+	pthread_mutex_lock(&philophs->term_mutex);
+	sim_state = RUNNING;
+	pthread_mutex_unlock(&philophs->term_mutex);
 	ft_wait_threads(philophs, count);
 	return (ft_destroy_philosophers(EXIT_SUCCESS, philophs, count));
 }

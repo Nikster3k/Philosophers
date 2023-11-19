@@ -5,96 +5,82 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/06 13:03:34 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/17 17:47:51 by nsassenb         ###   ########.fr       */
+/*   Created: 2023/11/18 17:44:28 by nsassenb          #+#    #+#             */
+/*   Updated: 2023/11/20 00:18:09 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	ft_get_philo_state(t_philo *philo)
+void	ft_kill_philo(t_philo *philo)
 {
-	int	ret;
-
+	if (philo->state == TERMINATE)
+		return ;
+	ft_print_action("died", philo, ft_gcts(philo->data.st));
+	philo->state = TERMINATE;
 	pthread_mutex_lock(&philo->term_mutex);
-	ret = philo->state;
-	pthread_mutex_unlock(&philo->term_mutex);
-	return (ret);
-}
-
-void	ft_set_philo_state(t_philo *philo, int val)
-{
-	pthread_mutex_lock(&philo->term_mutex);
-	philo->state = val;
+	*(philo->term_state) = TERMINATE;
 	pthread_mutex_unlock(&philo->term_mutex);
 }
 
-int	ft_try_eat(t_philo *philo)
+int	ft_check_death(t_philo *philo)
 {
-	if (ft_took_forks(philo))
+	return (ft_currtime() - philo->lasteat >= philo->data.ttd);
+}
+
+void	ft_philo_sleep(t_philo *philo, int time_ms)
+{
+	long	sleep_time;
+
+	sleep_time = ft_currtime() + time_ms;
+	while (sleep_time >= ft_currtime() && philo->state == RUNNING)
 	{
-		if (ft_philo_check_death(philo))
+		if (ft_check_death(philo))
+			ft_kill_philo(philo);
+	}
+}
+
+int	ft_philo_action(t_philo *philo)
+{
+	if (ft_lock_forks(philo))
+	{
+		ft_print_action("is eating", philo, ft_gcts(philo->data.st));
+		philo->lasteat = ft_currtime();
+		ft_philo_sleep(philo, philo->data.tte);
+		philo->eatcount++;
+		if (philo->state == TERMINATE)
 		{
-			ft_drop_forks(philo);
+			ft_unlock_forks(philo);
 			return (-1);
 		}
-		ft_print_action("is eating", philo);
-		philo->lasteat = ft_currtime();
-		usleep(philo->data.tte * 1000);
-		philo->eatcount++;
-		ft_drop_forks(philo);
-		ft_print_action("is sleeping", philo);
+		ft_unlock_forks(philo);
+		ft_print_action("is sleeping", philo, ft_gcts(philo->data.st));
 		ft_philo_sleep(philo, philo->data.tts);
-		ft_print_action("is thinking", philo);
-		return (1);
+		if (philo->state == TERMINATE)
+			return (-1);
+		ft_print_action("is thinking", philo, ft_gcts(philo->data.st));
 	}
 	return (0);
 }
 
-void	*ft_philo_main(void *void_philo)
+void	*ft_philo_main(void *data)
 {
-	t_philo	*philo;
+	t_philo	*self;
 
-	philo = void_philo;
-	philo->lasteat = ft_currtime();
-	ft_print_action("is thinking", philo);
-	while (ft_get_philo_state(philo) == RUNNING)
+	self = data;
+	while (ft_sim_running(self) == STOP)
+		;
+	self->data.st = ft_currtime();
+	self->lasteat = self->data.st;
+	ft_print_action("is thinking", self, ft_gcts(self->data.st));
+	while (self->state == RUNNING && ft_sim_running(self) == RUNNING)
 	{
-		if (ft_try_eat(philo) == -1 || ft_philo_check_death(philo))
-		{
-			ft_philo_die(philo);
+		if (ft_philo_action(self) == -1)
 			break ;
-		}
-		if (philo->data.mineat != 0 && philo->eatcount == philo->data.mineat)
-		{
-			ft_set_philo_state(philo, DONE);
-			break ;
-		}
+		if (ft_currtime() - self->lasteat >= self->data.ttd)
+			ft_kill_philo(self);
+		if (self->data.mineat != 0 && self->eatcount == self->data.mineat)
+			self->state = DONE;
 	}
-	ft_drop_forks(philo);
-	return ((void *)(size_t)ft_get_philo_state(philo));
-}
-
-int	ft_kill_cascade(t_philo *philos, int count)
-{
-	int	i;
-	int	done_count;
-
-	i = 0;
-	done_count = 0;
-	while (done_count != count)
-	{
-		i *= (i < count);
-		if (ft_get_philo_state(&philos[i]) == DONE)
-			done_count++;
-		if (ft_get_philo_state(&philos[i]) == TERMINATE)
-		{
-			i = 0;
-			while (i < count)
-				ft_set_philo_state(&philos[i++], DONE);
-			break ;
-		}
-		i++;
-	}
-	return (EXIT_SUCCESS);
+	return (NULL);
 }
