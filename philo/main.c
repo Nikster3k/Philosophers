@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/20 00:18:38 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/20 18:20:40 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,19 +51,35 @@ int	ft_sim_running(t_philo *philo)
 	return (ret);
 }
 
+void	ft_sim_set_state(t_philo *philo, t_state new_state)
+{
+	pthread_mutex_lock(&philo->term_mutex);
+	*(philo->term_state) = new_state;
+	pthread_mutex_unlock(&philo->term_mutex);
+}
+
 int	ft_start_philos(t_philo *philos, int count)
 {
-	int	i;
+	long	start_time;
+	int		i;
 
 	i = 0;
 	if (count == 1)
 	{
-		pthread_create(&philos[0].tid, NULL, ft_philo_solo, &philos[0]);
+		if (pthread_create(&philos[0].tid, NULL, ft_philo_solo, &philos[0]))
+			return (EXIT_FAILURE);
 		return (EXIT_SUCCESS);
 	}
+	start_time = ft_currtime();
 	while (i < count)
 	{
-		pthread_create(&philos[i].tid, NULL, ft_philo_main, &philos[i]);
+		philos[i].data.st = start_time;
+		if (pthread_create(&philos[i].tid, NULL, ft_philo_main, &philos[i]))
+		{
+			ft_sim_set_state(&philos[0], TERMINATE);
+			ft_wait_threads(philos, i);
+			return (EXIT_FAILURE);
+		}
 		i++;
 	}
 	return (EXIT_SUCCESS);
@@ -82,11 +98,11 @@ int	main(int argc, char **argv)
 	philophs = ft_calloc(sizeof(t_philo), count);
 	if (philophs == NULL)
 		return (MALLOC_FAIL);
-	data.st = ft_currtime();
 	sim_state = STOP;
 	if (ft_init_philosophers(philophs, count, &data, &sim_state))
 		return (ft_destroy_philosophers(MALLOC_FAIL, philophs, count));
-	ft_start_philos(philophs, count);
+	if (ft_start_philos(philophs, count))
+		return (ft_destroy_philosophers(EXIT_FAILURE, philophs, count));
 	pthread_mutex_lock(&philophs->term_mutex);
 	sim_state = RUNNING;
 	pthread_mutex_unlock(&philophs->term_mutex);

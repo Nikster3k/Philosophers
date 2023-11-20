@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:44:28 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/20 16:04:12 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/20 18:29:06 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,9 @@ void	*ft_philo_main(void *data)
 	self = data;
 	while (ft_sim_running(self) == STOP)
 		;
-	self->data.st = ft_currtime();
-	self->lasteat = self->data.st;
-	ft_print_action("is thinking", self, ft_gcts(self->data.st));
+	if (ft_sim_running(self) == TERMINATE)
+		return (NULL);
+	self->lasteat = ft_currtime();
 	while (self->state == RUNNING && ft_sim_running(self) == RUNNING)
 	{
 		if (ft_philo_action(self) == -1)
