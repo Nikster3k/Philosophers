@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:53:06 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/21 19:06:16 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/21 19:27:53 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,13 @@ int	ft_wait_philos(t_philo *philos, int count)
 	done_count = 0;
 	while (done_count != count)
 	{
-		x = 0;
+		x = -1;
 		done_count = 0;
-		while (x < count)
+		while (++x < count)
 		{
 			if (ft_get_philo_state(&philos[x]) == DONE)
 				done_count++;
-			if (ft_check_death(&philos[x]) && printf("%i Check for death is dead tw: %i, state %i\n", philos[x].nbr, (ft_currtime() - philos[x].lasteat) >= philos[x].data.ttd, philos[x].state))
+			if (ft_check_death(&philos[x]))
 			{
 				ft_kill_philo(&philos[x]);
 				x = 0;
@@ -62,7 +62,6 @@ int	ft_wait_philos(t_philo *philos, int count)
 				done_count = count;
 				break ;
 			}
-			x++;
 		}
 	}
 	ft_wait_threads(philos, count);

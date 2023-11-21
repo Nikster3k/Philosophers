@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:44:28 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/21 19:05:59 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/21 19:27:15 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,6 @@ void	*ft_philo_main(void *data)
 	t_philo	*self;
 
 	self = data;
-	// while (ft_sim_get_state(self) == STOP)
-	// 	;
 	if (ft_sim_get_state(self) == TERMINATE)
 		return (NULL);
 	if (self->nbr % 2 == 0)

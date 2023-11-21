@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/21 17:52:58 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/21 19:27:56 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,12 +81,11 @@ int	main(int argc, char **argv)
 	philophs = ft_calloc(sizeof(t_philo), count);
 	if (philophs == NULL)
 		return (MALLOC_FAIL);
-	sim_data.state = STOP;
+	sim_data.state = RUNNING;
 	if (ft_init_philosophers(philophs, count, &data, &sim_data))
 		return (ft_destroy_philosophers(MALLOC_FAIL, philophs, count));
 	if (ft_start_philos(philophs, count))
 		return (ft_destroy_philosophers(EXIT_FAILURE, philophs, count));
-	ft_sim_set_state(philophs, RUNNING);
 	ft_wait_philos(philophs, count);
 	return (ft_destroy_philosophers(EXIT_SUCCESS, philophs, count));
 }
