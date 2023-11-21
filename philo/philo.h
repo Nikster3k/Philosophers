@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:40:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/20 18:16:13 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/21 15:29:29 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,13 @@
 # define BAD_ARGS 3
 # define MUTEX_INITFAIL 4
 
-typedef struct s_fork
+typedef enum e_state
 {
-	pthread_mutex_t	mutex;
-	pthread_mutex_t	bool_mutex;
-	pthread_t		owner;
-}	t_fork;
+	RUNNING,
+	DONE,
+	TERMINATE,
+	STOP
+}	t_state;
 
 typedef struct s_lifedata
 {
@@ -39,13 +40,11 @@ typedef struct s_lifedata
 	int		mineat;
 }	t_lifedata;
 
-typedef enum e_state
+typedef struct s_simdata
 {
-	RUNNING,
-	DONE,
-	TERMINATE,
-	STOP
-}	t_state;
+	pthread_mutex_t	sim_mutex;
+	t_state			state;
+}	t_sim;
 
 typedef struct s_philo
 {
@@ -54,21 +53,24 @@ typedef struct s_philo
 	int				nbr;
 	int				eatcount;
 	long			lasteat;
-	t_fork			own;
-	t_fork			*right;
+	pthread_mutex_t	own;
+	pthread_mutex_t	*right;
 	t_state			state;
-	pthread_mutex_t	term_mutex;
-	t_state			*term_state;
+	pthread_mutex_t	data_mutex;
+	t_sim			*sim;
 }	t_philo;
 
-//main.c ??
-int			ft_sim_running(t_philo *philo);
+//philo_sim.c
+void		ft_sim_set_state(t_philo *philo, t_state new_state);
+int			ft_sim_get_state(t_philo *philo);
+int			ft_wait_philos(t_philo *philos, int count);
+void		*ft_philo_solo(void *data);
 
 //philo_utils.c
+int			ft_get_philo_state(t_philo *philo);
+void		ft_set_philo_state(t_philo *philo, int val);
 int			ft_lock_forks(t_philo *philo);
 void		ft_unlock_forks(t_philo *philo);
-void		*ft_philo_solo(void *data);
-int			ft_fork_unlock(t_philo *philo, t_fork *fork);
 
 //philo.c
 void		ft_kill_philo(t_philo *philo);
@@ -77,29 +79,23 @@ void		ft_philo_sleep(t_philo *philo, int time_ms);
 int			ft_philo_action(t_philo *philo);
 void		*ft_philo_main(void *data);
 
-//fork.c
-pthread_t	ft_get_fork_owner(t_fork *fork);
-int			ft_set_fork_owner(t_fork *fork, pthread_t new);
-
 //utils.c
 int			ft_isdigit(char c);
 long		ft_atol(const char *nptr);
 void		*ft_calloc(size_t nmemb, size_t size);
 
 //print_mutli.c
-void		ft_print_action(char *str, t_philo *philo, long time_stamp);
-void		*ft_print_job(void *void_data);
-void		ft_print_action_multi(char *str, t_philo *philo, long time_stamp);
+void		ft_print_action(char *str, t_philo *philo);
 
 //initialize_philosophers.c
 int			ft_destroy_philosophers(int err, t_philo *phil, int count);
-int			ft_init_philosophers(t_philo *philos, int count, t_lifedata *data,
-				t_state *sim_state);
+int			ft_init_philosophers(t_philo *philos, int count,
+				t_lifedata *data, t_sim *sim);
 int			ft_init_data(int argc, char **argv, t_lifedata *data);
 
 //time.c
 long		ft_tvtms(struct timeval *tv);
 long		ft_currtime(void);
-long		ft_gcts(long start);
+long		ft_gcts(t_philo *philo);
 
 #endif //!PHILO_H

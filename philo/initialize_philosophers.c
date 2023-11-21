@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 12:12:52 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/19 18:50:53 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/21 14:48:38 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,30 +20,31 @@ int	ft_destroy_philosophers(int err, t_philo *phil, int count)
 		return (err);
 	i = 0;
 	while (i < count)
-		pthread_mutex_destroy(&phil[i++].own.mutex);
+		pthread_mutex_destroy(&phil[i++].own);
 	free(phil);
 	return (err);
 }
 
-int	ft_init_philosophers(t_philo *philos, int count, t_lifedata *data,
-	t_state *sim_state)
+int	ft_init_philosophers(t_philo *philos, int count,
+	t_lifedata *data, t_sim *sim)
 {
 	int		i;
 
 	i = 0;
+	if (pthread_mutex_init(&sim->sim_mutex, NULL))
+		return (MUTEX_INITFAIL);
 	while (i < count)
 	{
-		if (pthread_mutex_init(&philos[i].own.mutex, NULL)
-			|| pthread_mutex_init(&philos[i].own.bool_mutex, NULL)
-			|| pthread_mutex_init(&philos[i].term_mutex, NULL))
+		if (pthread_mutex_init(&philos[i].own, NULL)
+			|| pthread_mutex_init(&philos[i].data_mutex, NULL))
 			return (MUTEX_INITFAIL);
 		i++;
 	}
 	i = 0;
 	while (i < count)
 	{
-		philos[i] = (t_philo){philos[i].tid, *data, i + 1, 0, 0,
-			philos[i].own, NULL, RUNNING, philos[i].term_mutex, sim_state};
+		philos[i] = (t_philo){philos[i].tid, *data, i + 1, 0, ft_currtime(),
+			philos[i].own, NULL, RUNNING, philos[i].data_mutex, sim};
 		if (i != count - 1)
 			philos[i].right = &philos[i + 1].own;
 		i++;
@@ -63,6 +64,6 @@ int	ft_init_data(int argc, char **argv, t_lifedata *data)
 	if (argc == 6)
 		data->mineat = ft_atol(argv[5]);
 	else
-		data->mineat = 0;
+		data->mineat = -1;
 	return (count);
 }

@@ -4,7 +4,7 @@ FLAGS = -Wall -Werror -Wextra -pthread -g
 OBJ_FOLDER = objs/
 
 SRCS =	main.c utils.c time.c philo.c philo_utils.c\
-		initialize_philosophers.c fork.c print_multi.c\
+		initialize_philosophers.c philo_sim.c print_multi.c\
 
 OBJS = $(addprefix $(OBJ_FOLDER), $(SRCS:.c=.o))
 
