@@ -1,7 +1,11 @@
 #!/bin/bash
 
-VAR=200
-ET=5
+# VAR=200
+# ET=5
+echo "enter philo amount"
+read VAR
+echo "enter eat count"
+read ET
 
 ./philo $VAR 410 200 200 $ET > output.txt
 for i in $(seq 1 $VAR); do
