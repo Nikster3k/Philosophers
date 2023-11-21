@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:44:28 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/21 17:52:40 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/21 19:05:59 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,11 @@ int	ft_check_death(t_philo *philo)
 	int	is_dead;
 
 	pthread_mutex_lock(&philo->data_mutex);
-	if (philo->state == TERMINATE)
-		is_dead = 1;
+	if (philo->state == DONE)
+		is_dead = 0;
 	else
-		is_dead = ((ft_currtime() - philo->lasteat) >= philo->data.ttd);
+		is_dead = ((ft_currtime() - philo->lasteat) >= philo->data.ttd)
+			|| philo->state == TERMINATE;
 	pthread_mutex_unlock(&philo->data_mutex);
 	return (is_dead);
 }
@@ -39,8 +40,12 @@ void	ft_philo_sleep(t_philo *philo, int time_ms)
 	long	sleep_time;
 
 	sleep_time = ft_currtime() + time_ms;
-	while (sleep_time >= ft_currtime() && ft_get_philo_state(philo) == RUNNING)
-		usleep(time_ms / 5);
+	while (sleep_time >= ft_currtime())
+	{
+		if (ft_get_philo_state(philo) != RUNNING)
+			break ;
+		usleep(time_ms / 10);
+	}
 }
 
 int	ft_philo_action(t_philo *philo)
@@ -66,8 +71,8 @@ void	*ft_philo_main(void *data)
 	t_philo	*self;
 
 	self = data;
-	while (ft_sim_get_state(self) == STOP)
-		;
+	// while (ft_sim_get_state(self) == STOP)
+	// 	;
 	if (ft_sim_get_state(self) == TERMINATE)
 		return (NULL);
 	if (self->nbr % 2 == 0)

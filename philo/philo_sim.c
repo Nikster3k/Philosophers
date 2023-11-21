@@ -6,11 +6,21 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:53:06 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/21 15:25:05 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/21 19:06:16 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static void	ft_wait_threads(t_philo *philos, int count)
+{
+	void	*ret;
+	int		i;
+
+	i = 0;
+	while (i < count)
+		pthread_join(philos[i++].tid, &ret);
+}
 
 int	ft_sim_get_state(t_philo *philo)
 {
@@ -31,30 +41,31 @@ void	ft_sim_set_state(t_philo *philo, t_state new_state)
 
 int	ft_wait_philos(t_philo *philos, int count)
 {
-	int	i;
 	int	x;
 	int	done_count;
 
-	i = 0;
 	done_count = 0;
 	while (done_count != count)
 	{
-		i *= (i < count);
-		if (ft_get_philo_state(&philos[i]) == DONE)
-			done_count++;
-		if (ft_check_death(&philos[i]))
+		x = 0;
+		done_count = 0;
+		while (x < count)
 		{
-			ft_kill_philo(&philos[i]);
-			x = 0;
-			while (x < count)
-				ft_set_philo_state(&philos[x++], TERMINATE);
-			break ;
+			if (ft_get_philo_state(&philos[x]) == DONE)
+				done_count++;
+			if (ft_check_death(&philos[x]) && printf("%i Check for death is dead tw: %i, state %i\n", philos[x].nbr, (ft_currtime() - philos[x].lasteat) >= philos[x].data.ttd, philos[x].state))
+			{
+				ft_kill_philo(&philos[x]);
+				x = 0;
+				while (x < count)
+					ft_set_philo_state(&philos[x++], TERMINATE);
+				done_count = count;
+				break ;
+			}
+			x++;
 		}
-		i++;
 	}
-	i = 0;
-	while (i < count)
-		pthread_join(philos[i++].tid, NULL);
+	ft_wait_threads(philos, count);
 	return (EXIT_SUCCESS);
 }
 
