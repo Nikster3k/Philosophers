@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/23 14:56:27 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/23 17:33:21 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ static int	ft_start_philos(t_philo *philos, int count)
 	start_time = ft_currtime();
 	if (count == 1)
 	{
+		philos[0].data.st = start_time;
 		if (pthread_create(&philos[0].tid, NULL, ft_philo_solo, &philos[0]))
 			return (FAIL_THREAD);
 		return (EXIT_SUCCESS);
