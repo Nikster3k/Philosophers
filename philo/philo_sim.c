@@ -6,20 +6,19 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/21 12:53:06 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/21 19:27:53 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/23 14:28:04 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void	ft_wait_threads(t_philo *philos, int count)
+void	ft_philos_set_state(t_philo *philos, int count, t_state state)
 {
-	void	*ret;
 	int		i;
 
 	i = 0;
 	while (i < count)
-		pthread_join(philos[i++].tid, &ret);
+		ft_set_philo_state(&philos[i++], state);
 }
 
 int	ft_sim_get_state(t_philo *philo)
@@ -56,9 +55,7 @@ int	ft_wait_philos(t_philo *philos, int count)
 			if (ft_check_death(&philos[x]))
 			{
 				ft_kill_philo(&philos[x]);
-				x = 0;
-				while (x < count)
-					ft_set_philo_state(&philos[x++], TERMINATE);
+				ft_philos_set_state(philos, count, TERMINATE);
 				done_count = count;
 				break ;
 			}

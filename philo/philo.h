@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:40:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/21 15:29:29 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/23 14:27:42 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # define MALLOC_FAIL 2
 # define BAD_ARGS 3
 # define MUTEX_INITFAIL 4
+# define FAIL_THREAD 5
 
 typedef enum e_state
 {
@@ -60,10 +61,14 @@ typedef struct s_philo
 	t_sim			*sim;
 }	t_philo;
 
+//main.c
+void		ft_wait_threads(t_philo *philos, int count);
+
 //philo_sim.c
 void		ft_sim_set_state(t_philo *philo, t_state new_state);
 int			ft_sim_get_state(t_philo *philo);
 int			ft_wait_philos(t_philo *philos, int count);
+void		ft_philos_set_state(t_philo *philos, int count, t_state state);
 void		*ft_philo_solo(void *data);
 
 //philo_utils.c

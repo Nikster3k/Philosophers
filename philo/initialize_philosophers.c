@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/02 12:12:52 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/21 14:48:38 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/23 14:17:57 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,13 @@ int	ft_destroy_philosophers(int err, t_philo *phil, int count)
 	if (phil == NULL)
 		return (err);
 	i = 0;
+	pthread_mutex_destroy(&phil->sim->sim_mutex);
 	while (i < count)
-		pthread_mutex_destroy(&phil[i++].own);
+	{
+		pthread_mutex_destroy(&phil[i].own);
+		pthread_mutex_destroy(&phil[i].data_mutex);
+		i++;
+	}
 	free(phil);
 	return (err);
 }

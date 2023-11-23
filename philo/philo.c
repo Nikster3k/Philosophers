@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/18 17:44:28 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/21 19:27:15 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/23 14:32:11 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,17 @@ int	ft_check_death(t_philo *philo)
 
 void	ft_philo_sleep(t_philo *philo, int time_ms)
 {
-	long	sleep_time;
+	const int	check_ms = 60;
 
-	sleep_time = ft_currtime() + time_ms;
-	while (sleep_time >= ft_currtime())
+	while (time_ms > 0)
 	{
 		if (ft_get_philo_state(philo) != RUNNING)
 			break ;
-		usleep(time_ms / 10);
+		if (time_ms < check_ms)
+			usleep((time_ms % check_ms) * 1000);
+		else
+			usleep(check_ms * 1000);
+		time_ms -= check_ms;
 	}
 }
 
@@ -52,10 +55,10 @@ int	ft_philo_action(t_philo *philo)
 {
 	if (ft_lock_forks(philo))
 	{
-		ft_print_action("is eating", philo);
 		pthread_mutex_lock(&philo->data_mutex);
 		philo->lasteat = ft_currtime();
 		pthread_mutex_unlock(&philo->data_mutex);
+		ft_print_action("is eating", philo);
 		ft_philo_sleep(philo, philo->data.tte);
 		philo->eatcount++;
 		ft_unlock_forks(philo);
@@ -77,10 +80,10 @@ void	*ft_philo_main(void *data)
 		ft_philo_sleep(self, self->data.tte - 10);
 	while (ft_get_philo_state(self) == RUNNING)
 	{
-		if (ft_philo_action(self) == -1)
-			break ;
 		if (self->data.mineat != -1 && self->eatcount == self->data.mineat)
 			ft_set_philo_state(self, DONE);
+		if (ft_philo_action(self) == -1)
+			break ;
 		if (ft_sim_get_state(self) != RUNNING)
 			break ;
 	}

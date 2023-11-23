@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/21 19:27:56 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/23 14:28:18 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,11 @@
 
 void	ft_wait_threads(t_philo *philos, int count)
 {
-	void	*ret;
 	int		i;
 
 	i = 0;
 	while (i < count)
-		pthread_join(philos[i++].tid, &ret);
+		pthread_join(philos[i++].tid, NULL);
 }
 
 static int	ft_check_args(int argc, char **argv)
@@ -51,7 +50,7 @@ static int	ft_start_philos(t_philo *philos, int count)
 	if (count == 1)
 	{
 		if (pthread_create(&philos[0].tid, NULL, ft_philo_solo, &philos[0]))
-			return (EXIT_FAILURE);
+			return (FAIL_THREAD);
 		return (EXIT_SUCCESS);
 	}
 	while (i < count)
@@ -60,8 +59,9 @@ static int	ft_start_philos(t_philo *philos, int count)
 		if (pthread_create(&philos[i].tid, NULL, ft_philo_main, &philos[i]))
 		{
 			ft_sim_set_state(&philos[0], TERMINATE);
+			ft_philos_set_state(philos, i, TERMINATE);
 			ft_wait_threads(philos, i);
-			return (EXIT_FAILURE);
+			return (FAIL_THREAD);
 		}
 		i++;
 	}
@@ -85,7 +85,7 @@ int	main(int argc, char **argv)
 	if (ft_init_philosophers(philophs, count, &data, &sim_data))
 		return (ft_destroy_philosophers(MALLOC_FAIL, philophs, count));
 	if (ft_start_philos(philophs, count))
-		return (ft_destroy_philosophers(EXIT_FAILURE, philophs, count));
+		return (ft_destroy_philosophers(FAIL_THREAD, philophs, count));
 	ft_wait_philos(philophs, count);
 	return (ft_destroy_philosophers(EXIT_SUCCESS, philophs, count));
 }
