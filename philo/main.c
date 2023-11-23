@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 12:14:32 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/23 14:28:18 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/23 14:56:27 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,9 +71,10 @@ static int	ft_start_philos(t_philo *philos, int count)
 int	main(int argc, char **argv)
 {
 	t_philo		*philophs;
-	t_sim		sim_data;
+	t_sim		sim;
 	t_lifedata	data;
 	int			count;
+	int			init_ret;
 
 	if (ft_check_args(argc, argv))
 		return (BAD_ARGS);
@@ -81,11 +82,12 @@ int	main(int argc, char **argv)
 	philophs = ft_calloc(sizeof(t_philo), count);
 	if (philophs == NULL)
 		return (MALLOC_FAIL);
-	sim_data.state = RUNNING;
-	if (ft_init_philosophers(philophs, count, &data, &sim_data))
-		return (ft_destroy_philosophers(MALLOC_FAIL, philophs, count));
+	sim.state = RUNNING;
+	init_ret = ft_init_philosophers(philophs, count, &data, &sim);
+	if (init_ret)
+		return (ft_destroy_philosophers(MALLOC_FAIL, philophs, &sim, init_ret));
 	if (ft_start_philos(philophs, count))
-		return (ft_destroy_philosophers(FAIL_THREAD, philophs, count));
+		return (ft_destroy_philosophers(FAIL_THREAD, philophs, &sim, count));
 	ft_wait_philos(philophs, count);
-	return (ft_destroy_philosophers(EXIT_SUCCESS, philophs, count));
+	return (ft_destroy_philosophers(EXIT_SUCCESS, philophs, &sim, count));
 }

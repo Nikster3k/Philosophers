@@ -6,7 +6,7 @@
 /*   By: nsassenb <nsassenb@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/01 13:40:01 by nsassenb          #+#    #+#             */
-/*   Updated: 2023/11/23 14:27:42 by nsassenb         ###   ########.fr       */
+/*   Updated: 2023/11/23 15:39:14 by nsassenb         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,8 @@ void		*ft_calloc(size_t nmemb, size_t size);
 void		ft_print_action(char *str, t_philo *philo);
 
 //initialize_philosophers.c
-int			ft_destroy_philosophers(int err, t_philo *phil, int count);
+int			ft_destroy_philosophers(int err, t_philo *phil,
+				t_sim *sim, int count);
 int			ft_init_philosophers(t_philo *philos, int count,
 				t_lifedata *data, t_sim *sim);
 int			ft_init_data(int argc, char **argv, t_lifedata *data);
